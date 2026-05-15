@@ -2,7 +2,7 @@ name: Build and Publish Docker Images
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
     tags: ["v*"]
   pull_request:
     branches: [main]
@@ -133,6 +133,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=semver,pattern={{version}},suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=raw,value=${{ matrix.variant.name }}-${{ env.ARCH }},enable={{is_default_branch}}
+            type=raw,value=Dev,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -227,6 +228,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=semver,pattern={{version}},suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=raw,value=${{ matrix.variant.name }}-${{ env.ARCH }},enable={{is_default_branch}}
+            type=raw,value=Dev,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -316,6 +318,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=semver,pattern={{version}},suffix=-${{ matrix.variant.name }}-${{ env.ARCH }}
             type=raw,value=${{ matrix.variant.name }}-${{ env.ARCH }},enable={{is_default_branch}}
+            type=raw,value=Dev,suffix=-${{ matrix.variant.name }}-${{ env.ARCH }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -368,6 +371,7 @@ jobs:
             type=ref,event=pr,suffix=-${{ matrix.variant }}
             type=semver,pattern={{version}},suffix=-${{ matrix.variant }}
             type=raw,value=${{ matrix.variant }},enable={{is_default_branch}}
+            type=raw,value=Dev,suffix=-${{ matrix.variant }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Create and push manifest
         run: |

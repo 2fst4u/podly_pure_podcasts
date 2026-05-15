@@ -15,7 +15,7 @@ const resolveRepositoryUrl = () => {
 };
 
 module.exports = {
-  branches: ["main"],
+  branches: ["main", { name: "*", prerelease: "dev" }],
   repositoryUrl: resolveRepositoryUrl(),
   tagFormat: "v${version}",
   plugins: [
