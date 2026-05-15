@@ -1,5 +1,4 @@
 # Multi-stage build for combined frontend and backend
-ARG BASE_IMAGE=python:3.11-slim
 FROM node:18-alpine AS frontend-build
 
 WORKDIR /app
@@ -18,47 +17,19 @@ RUN set -e && \
     echo "Frontend build successful - dist directory created"
 
 # Backend stage
-FROM ${BASE_IMAGE} AS backend
+FROM python:3.11-slim AS backend
 
 # Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ARG CUDA_VERSION=12.4.1
-ARG ROCM_VERSION=6.4
-ARG USE_GPU=false
-ARG USE_GPU_NVIDIA=${USE_GPU}
-ARG USE_GPU_AMD=false
-ARG LITE_BUILD=false
 
 WORKDIR /app
 
-# Install dependencies based on base image
+# Install dependencies
 RUN if [ -f /etc/debian_version ]; then \
     apt-get update && \
-    apt-get install -y ca-certificates && \
-    # Determine if we need to install Python 3.11
-    INSTALL_PYTHON=true && \
-    if command -v python3 >/dev/null 2>&1; then \
-        if python3 --version 2>&1 | grep -q "3.11"; then \
-            INSTALL_PYTHON=false; \
-        fi; \
-    fi && \
-    if [ "$INSTALL_PYTHON" = "true" ]; then \
-        apt-get install -y software-properties-common && \
-        if ! apt-cache show python3.11 > /dev/null 2>&1; then \
-            add-apt-repository ppa:deadsnakes/ppa -y && \
-            apt-get update; \
-        fi && \
-        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python3.11 \
-        python3.11-distutils \
-        python3.11-dev \
-        python3-pip && \
-        update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 && \
-        update-alternatives --set python3 /usr/bin/python3.11; \
-    fi && \
-    # Install other dependencies
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
     ffmpeg \
     sqlite3 \
     libsqlite3-dev \
@@ -68,19 +39,8 @@ RUN if [ -f /etc/debian_version ]; then \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ; \
     fi
 
-# Install python3-tomli if Python version is less than 3.11 (separate step for ARM compatibility)
-RUN if [ -f /etc/debian_version ]; then \
-    PYTHON_MINOR=$(python3 --version 2>&1 | grep -o 'Python 3\.[0-9]*' | cut -d '.' -f2) && \
-    if [ "$PYTHON_MINOR" -lt 11 ]; then \
-    apt-get update && \
-    apt-get install -y python3-tomli && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* ; \
-    fi ; \
-    fi
-
-# Copy all Pipfiles/lock files
-COPY Pipfile Pipfile.lock Pipfile.lite Pipfile.lite.lock ./
+# Copy Pipfiles/lock files
+COPY Pipfile Pipfile.lock ./
 
 # Remove problematic distutils-installed packages that may conflict
 RUN if [ -f /etc/debian_version ]; then \
@@ -88,64 +48,8 @@ RUN if [ -f /etc/debian_version ]; then \
     fi
 
 # Install pipenv and dependencies
-RUN if command -v pip >/dev/null 2>&1; then \
-    pip install --no-cache-dir pipenv; \
-    elif command -v pip3 >/dev/null 2>&1; then \
-    pip3 install --no-cache-dir pipenv; \
-    else \
-    python3 -m pip install --no-cache-dir pipenv; \
-    fi
-
-# Set pip timeout and retries for better reliability
-ENV PIP_DEFAULT_TIMEOUT=1000
-ENV PIP_RETRIES=3
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-ENV PIP_NO_CACHE_DIR=1
-
-# Set pipenv configuration for better CI reliability
-ENV PIPENV_VENV_IN_PROJECT=1
-ENV PIPENV_TIMEOUT=1200
-
-# Install dependencies conditionally based on LITE_BUILD
-RUN set -e && \
-    if [ "${LITE_BUILD}" = "true" ]; then \
-    echo "Installing lite dependencies (without Whisper)"; \
-    echo "Using lite Pipfile:" && \
-    PIPENV_PIPFILE=Pipfile.lite pipenv install --deploy --system; \
-    else \
-    echo "Installing full dependencies (including Whisper)"; \
-    echo "Using full Pipfile:" && \
-    PIPENV_PIPFILE=Pipfile pipenv install --deploy --system; \
-    fi
-
-# Install PyTorch with CUDA support if using NVIDIA image (skip if LITE_BUILD)
-RUN if [ "${LITE_BUILD}" = "true" ]; then \
-    echo "Skipping PyTorch installation in lite mode"; \
-    elif [ "${USE_GPU}" = "true" ] || [ "${USE_GPU_NVIDIA}" = "true" ]; then \
-    if command -v pip >/dev/null 2>&1; then \
-    pip install --no-cache-dir nvidia-cudnn-cu12 torch; \
-    elif command -v pip3 >/dev/null 2>&1; then \
-    pip3 install --no-cache-dir nvidia-cudnn-cu12 torch; \
-    else \
-    python3 -m pip install --no-cache-dir nvidia-cudnn-cu12 torch; \
-    fi; \
-    elif [ "${USE_GPU_AMD}" = "true" ]; then \
-    if command -v pip >/dev/null 2>&1; then \
-    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/rocm${ROCM_VERSION}; \
-    elif command -v pip3 >/dev/null 2>&1; then \
-    pip3 install --no-cache-dir torch --index-url https://download.pytorch.org/whl/rocm${ROCM_VERSION}; \
-    else \
-    python3 -m pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/rocm${ROCM_VERSION}; \
-    fi; \
-    else \
-    if command -v pip >/dev/null 2>&1; then \
-    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu; \
-    elif command -v pip3 >/dev/null 2>&1; then \
-    pip3 install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu; \
-    else \
-    python3 -m pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu; \
-    fi; \
-    fi
+RUN pip install --no-cache-dir pipenv && \
+    pipenv install --deploy --system
 
 # Copy application code
 COPY src/ ./src/

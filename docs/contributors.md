@@ -150,9 +150,6 @@ Podly can be run in Docker with support for both NVIDIA GPU and non-NVIDIA envir
 ```bash
 ./run_podly_docker.sh --dev          # rebuild containers for local changes
 ./run_podly_docker.sh --production   # use published images
-./run_podly_docker.sh --lite         # smaller image without local Whisper
-./run_podly_docker.sh --cpu          # force CPU mode
-./run_podly_docker.sh --gpu          # force GPU mode
 ./run_podly_docker.sh --build        # build only
 ./run_podly_docker.sh --test-build   # test build
 ./run_podly_docker.sh -d             # detached
@@ -199,20 +196,6 @@ Q: What does "whitelisted" mean in the UI?
 
 A: It means an episode is eligible for download and ad removal. By default, new episodes are automatically whitelisted (`automatically_whitelist_new_episodes`), and only a limited number of old episodes are auto-whitelisted (`number_of_episodes_to_whitelist_from_archive_of_new_feed`). Adjust these settings in the Config page (/config).
 
-Q: How can I enable whisper GPU acceleration?
-
-A: There are two ways to enable GPU acceleration:
-
-1. **Using Docker**:
-
-   - Use the provided Docker setup with `run_podly_docker.sh` which automatically detects and uses NVIDIA GPUs if available
-   - You can force GPU mode with `./run_podly_docker.sh --gpu` or force CPU mode with `./run_podly_docker.sh --cpu`
-
-2. **In a local environment**:
-   - Install the CUDA version of PyTorch to your virtual environment:
-   ```bash
-   pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-   ```
 
 ## Contributing
 
@@ -257,7 +240,7 @@ Both scripts provide equivalent core functionality with some unique features:
 
 - **Development mode**: `./run_podly_docker.sh --dev` - rebuilds containers with code changes
 - **Production mode**: `./run_podly_docker.sh --production` - uses pre-built images
-- **Docker-specific options**: `--build`, `--test-build`, `--gpu`, `--cpu`, `--cuda=VERSION`, `--rocm=VERSION`, `--branch=BRANCH`
+- **Docker-specific options**: `--build`, `--test-build`, `--branch=BRANCH`
 
 **Functional Equivalence**:
 Both scripts provide the same core user experience:

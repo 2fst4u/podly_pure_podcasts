@@ -146,12 +146,6 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 ## Advanced Options
 
 ```bash
-# Force CPU-only processing (if you have GPU issues)
-./run_podly_docker.sh --cpu
-
-# Force GPU processing
-./run_podly_docker.sh --gpu
-
 # Just build the container without running
 ./run_podly_docker.sh --build
 
@@ -207,7 +201,6 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 ### Out of memory errors
 
 - Close other applications to free up RAM
-- Consider using `--cpu` flag if you have limited memory
 
 ## Stopping Podly
 
