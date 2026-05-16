@@ -5,13 +5,11 @@ on:
     branches-ignore:
       - main
     tags: ["v*"]
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read
   packages: write
-  
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/podly-pure-podcasts
@@ -30,18 +28,10 @@ jobs:
       - name: Check for documentation-only changes
         id: check_files
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_REF="${{ github.event.pull_request.base.ref }}"
-            git fetch --no-tags origin "$BASE_REF"
-            BASE_SHA=$(git rev-parse "origin/$BASE_REF")
-            HEAD_SHA=$(git rev-parse "${{ github.sha }}")
-            files_changed=$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            files_changed=$(git diff --name-only HEAD~1 HEAD)
           else
-            if git rev-parse HEAD~1 >/dev/null 2>&1; then
-              files_changed=$(git diff --name-only HEAD~1 HEAD)
-            else
-              files_changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
-            fi
+            files_changed=$(git diff-tree --no-commit-id --name-only -r HEAD)
           fi
 
           non_doc_files=$(echo "$files_changed" | grep -v -E '(\.md$|^docs/|LICENCE)' || true)
@@ -84,10 +74,9 @@ jobs:
             suffix=-${{ env.ARCH }},onlatest=true
           tags: |
             type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
+            type=raw,value=Dev,enable=${{ github.ref_type != 'tag' }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -101,7 +90,7 @@ jobs:
 
   build-arm64:
     needs: changes
-    if: ${{ needs.changes.outputs.skip == 'false' }}
+    if: ${{ needs.changes.outputs.skip == 'false' && github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
     env:
       ARCH: arm64
@@ -132,11 +121,8 @@ jobs:
           flavor: |
             suffix=-${{ env.ARCH }},onlatest=true
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -150,7 +136,7 @@ jobs:
 
   manifest:
     needs: [changes, build-amd64, build-arm64]
-    if: ${{ needs.changes.outputs.skip == 'false' }}
+    if: ${{ needs.changes.outputs.skip == 'false' && github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -171,11 +157,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Create and push manifest
         run: |
