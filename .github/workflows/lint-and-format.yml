@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
+permissions:
+  contents: read
 
 jobs:
   lint-format-test:
@@ -14,7 +14,6 @@ jobs:
     env:
       PIPENV_VENV_IN_PROJECT: "1"
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,7 +32,7 @@ jobs:
       - name: Install pipenv
         run: pip install pipenv
 
-      - name: Cache pipenv virtualenv
+      - name: Cache virtualenv
         uses: actions/cache@v4
         with:
           path: .venv
@@ -52,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pipenv install --dev --deploy
 
-      - name: Install dependencies for mypy
+      - name: Run mypy
         run: pipenv run mypy . --install-types --non-interactive --explicit-package-bases --exclude 'migrations' --exclude 'build' --exclude 'scripts' --exclude 'src/tests' --exclude 'src/tests/test_routes.py' --exclude 'src/app/routes.py'
 
       - name: Run pylint

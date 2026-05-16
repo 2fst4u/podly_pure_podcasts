@@ -1,3 +1,18 @@
+# [1.1.0-dev.1](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.0...v1.1.0-dev.1) (2026-05-16)
+
+
+### Bug Fixes
+
+* **ci:** prevent grep exit-1 from failing changes job ([6ab132c](https://github.com/2fst4u/podly_pure_podcasts/commit/6ab132c53cd2860a9d8cd4f87a2a20dabc6f0515))
+* resolve CHANGELOG.md merge conflict with main ([b5069df](https://github.com/2fst4u/podly_pure_podcasts/commit/b5069dfa8a894a3e92f845a684ee2900da600870))
+
+
+### Features
+
+* **ci:** add versioned Dev-{{version}} Docker tags for ordered dev pulls ([fd50111](https://github.com/2fst4u/podly_pure_podcasts/commit/fd5011139898ff7d34b7cd15caa8b8006dd004c9))
+
+# [1.0.0-dev.2](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-05-16)
+
 # 1.0.0 (2026-05-16)
 
 
