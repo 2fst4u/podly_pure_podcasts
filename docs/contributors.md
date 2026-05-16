@@ -2,13 +2,12 @@
 
 ### Quick Start (Docker - recommended for local setup)
 
-1. Make the script executable and run:
+1. Build and run the containers:
 
 ```bash
-chmod +x run_podly_docker.sh
-./run_podly_docker.sh --build
-./run_podly_docker.sh # foreground with logs 
-./run_podly_docker.sh -d # or detached
+docker compose build
+docker compose up       # foreground with logs
+docker compose up -d    # or detached
 ```
 
 This automatically detects NVIDIA GPUs and uses them if available.
@@ -143,50 +142,28 @@ If no Conventional Commit is present, the release pipeline will have nothing to 
 
 ## Docker Support
 
-Podly can be run in Docker with support for both NVIDIA GPU and non-NVIDIA environments.
+Podly can be run in Docker with support for both NVIDIA GPU and non-NVIDIA environments. By default, `compose.yml` pulls pre-built images from GitHub Container Registry.
 
-### Docker Options
+### Common Commands
 
 ```bash
-./run_podly_docker.sh --dev          # rebuild containers for local changes
-./run_podly_docker.sh --production   # use published images
-./run_podly_docker.sh --build        # build only
-./run_podly_docker.sh --test-build   # test build
-./run_podly_docker.sh -d             # detached
+docker compose up            # start in the foreground
+docker compose up -d         # start in detached mode
+docker compose build         # build locally (requires a build-enabled compose override)
+docker compose down          # stop and remove containers
 ```
 
-### Development vs Production Modes
-
-**Development Mode** (default):
-
-- Uses local Docker builds
-- Requires rebuilding after code changes: `./run_podly_docker.sh --dev`
-- Mounts essential directories (config, input/output, database) and live code for development
-- Good for: development, testing, customization
-
-**Production Mode**:
-
-- Uses pre-built images from GitHub Container Registry
-- No building required - images are pulled automatically
-- Same volume mounts as development
-- Good for: deployment, quick setup, consistent environments
+To target a specific image tag, set the `BRANCH` env var before running, for example:
 
 ```bash
-# Start with existing local container
-./run_podly_docker.sh
-
-# Rebuild and start after making code changes
-./run_podly_docker.sh --dev
-
-# Use published images (no local building required)
-./run_podly_docker.sh --production
+BRANCH=main-latest docker compose up -d
 ```
 
 ### Docker Environment Configuration
 
 **Environment Variables**:
 
-- `PUID`/`PGID`: User/group IDs for file permissions (automatically set by run script)
+- `PUID`/`PGID`: User/group IDs for file permissions
 - `CUDA_VISIBLE_DEVICES`: GPU device selection for CUDA acceleration
 - `CORS_ORIGINS`: Backend CORS configuration (defaults to accept requests from any origin)
 
@@ -216,39 +193,10 @@ We welcome contributions to Podly! Here's how you can help:
 
 #### Application Ports
 
-Both local and Docker deployments provide a consistent experience:
-
 - **Application**: Runs on port 5001 (configurable via web UI at `/config`)
   - Serves both the web interface and API endpoints
   - Frontend is built as static assets and served by the backend
-- **Development**: `run_podly_docker.sh` serves everything on port 5001
-  - Local script builds frontend to static assets (like Docker)
-  - Restart `./run_podly_docker.sh` after frontend changes to rebuild assets
-
-#### Development Modes
-
-Both scripts provide equivalent core functionality with some unique features:
-
-**Common Options (work in both scripts)**:
-
-- `-b/--background` or `-d/--detach`: Run in background mode
-- `-h/--help`: Show help information
-
-**Local Development**
-
-**Docker Development** (`./run_podly_docker.sh`):
-
-- **Development mode**: `./run_podly_docker.sh --dev` - rebuilds containers with code changes
-- **Production mode**: `./run_podly_docker.sh --production` - uses pre-built images
-- **Docker-specific options**: `--build`, `--test-build`, `--branch=BRANCH`
-
-**Functional Equivalence**:
-Both scripts provide the same core user experience:
-
-- Application runs on port 5001 (configurable)
-- Frontend served as static assets by Flask backend
-- Same web interface and API endpoints
-- Compatible background/detached modes
+- Restart the container after frontend changes to rebuild assets
 
 ### Running Tests
 

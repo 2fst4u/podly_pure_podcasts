@@ -18,7 +18,7 @@ If you don't have the repo downloaded:
 Help me install docker and run Podly https://github.com/podly-pure-podcasts/podly_pure_podcasts
 After the project is cloned, help me:
 - install docker & docker compose
-- run `./run_podly_docker.sh --build` then `./run_podly_docker.sh -d`
+- run `docker compose build` then `docker compose up -d`
 - configure the app via the web UI at http://localhost:5001/config
 Be sure to check if a dependency is already installed before downloading.
 We recommend Docker because installing ffmpeg & local whisper can be difficult.
@@ -33,7 +33,7 @@ If you do have the repo pulled, open this file and prompt:
 Review this project, follow this guide and start Podly on my computer.
 Briefly, help me:
 - install docker & docker compose
-- run `./run_podly_docker.sh --build` and then `./run_podly_docker.sh -d`
+- run `docker compose build` and then `docker compose up -d`
 - configure the app via the web UI at http://localhost:5001/config
 Be sure to check if a dependency is already installed before downloading.
 We recommend docker because installing ffmpeg & local whisper can be difficult.
@@ -112,10 +112,9 @@ cd podly_pure_podcasts
 ### Run the Application via Docker
 
 ```bash
-chmod +x run_podly_docker.sh
-./run_podly_docker.sh --build
-./run_podly_docker.sh            # foreground
-./run_podly_docker.sh -d         # detached
+docker compose build
+docker compose up            # foreground
+docker compose up -d         # detached
 ```
 
 ### Optional: Enable Authentication
@@ -147,10 +146,10 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 
 ```bash
 # Just build the container without running
-./run_podly_docker.sh --build
+docker compose build
 
 # Test build from scratch (useful for troubleshooting)
-./run_podly_docker.sh --test-build
+docker compose build --no-cache
 ```
 
 ## Using Podly
@@ -182,7 +181,7 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 
 ### "Permission denied" errors
 
-- On macOS/Linux, make sure the script is executable: `chmod +x run_podly_docker.sh`
+- On Linux, make sure your user is in the `docker` group (see installation steps above)
 - On Windows, try running Command Prompt as Administrator
 
 ### OpenAI API errors
