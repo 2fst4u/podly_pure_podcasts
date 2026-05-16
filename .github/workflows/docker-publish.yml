@@ -6,8 +6,6 @@ on:
     tags: ["v*"]
   pull_request:
     branches: [main]
-  release:
-    types: [published]
 
 permissions:
   contents: read
@@ -37,12 +35,6 @@ jobs:
             BASE_SHA=$(git rev-parse "origin/$BASE_REF")
             HEAD_SHA=$(git rev-parse "${{ github.sha }}")
             files_changed=$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA")
-          elif [ "${{ github.event_name }}" = "release" ]; then
-            TARGET_REF="${{ github.event.release.target_commitish }}"
-            git fetch --no-tags origin "$TARGET_REF" || true
-            HEAD_SHA=$(git rev-parse "${{ github.sha }}")
-            BASE_SHA=$(git rev-parse "origin/$TARGET_REF" 2>/dev/null || git rev-parse "$TARGET_REF" 2>/dev/null || echo "$HEAD_SHA")
-            files_changed=$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA" 2>/dev/null || echo "release-trigger")
           else
             if git rev-parse HEAD~1 >/dev/null 2>&1; then
               files_changed=$(git diff --name-only HEAD~1 HEAD)
@@ -53,9 +45,7 @@ jobs:
 
           non_doc_files=$(echo "$files_changed" | grep -v -E '(\.md$|^docs/|LICENCE)')
 
-          if [ "${{ github.event_name }}" = "release" ]; then
-            echo "skip=false" >> $GITHUB_OUTPUT
-          elif [ -z "$non_doc_files" ]; then
+          if [ -z "$non_doc_files" ] && [ "${{ github.ref_type }}" != "tag" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
           else
             echo "skip=false" >> $GITHUB_OUTPUT
@@ -89,12 +79,14 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            suffix=-${{ env.ARCH }},onlatest=true
           tags: |
-            type=ref,event=branch,suffix=-${{ env.ARCH }}
-            type=ref,event=pr,suffix=-${{ env.ARCH }}
-            type=semver,pattern={{version}},suffix=-${{ env.ARCH }}
-            type=raw,value=latest-${{ env.ARCH }},enable={{is_default_branch}}
-            type=raw,value=Dev,suffix=-${{ env.ARCH }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -136,12 +128,14 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            suffix=-${{ env.ARCH }},onlatest=true
           tags: |
-            type=ref,event=branch,suffix=-${{ env.ARCH }}
-            type=ref,event=pr,suffix=-${{ env.ARCH }}
-            type=semver,pattern={{version}},suffix=-${{ env.ARCH }}
-            type=raw,value=latest-${{ env.ARCH }},enable={{is_default_branch}}
-            type=raw,value=Dev,suffix=-${{ env.ARCH }},enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
       - name: Build and push
         uses: docker/build-push-action@v5

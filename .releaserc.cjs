@@ -19,7 +19,21 @@ module.exports = {
   repositoryUrl: resolveRepositoryUrl(),
   tagFormat: "v${version}",
   plugins: [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        preset: "angular",
+        releaseRules: [
+          { type: "docs", release: "patch" },
+          { type: "refactor", release: "patch" },
+          { type: "style", release: "patch" },
+          { type: "chore", release: "patch" },
+          { type: "test", release: "patch" },
+          { type: "build", release: "patch" },
+          { type: "ci", release: "patch" },
+        ],
+      },
+    ],
     "@semantic-release/release-notes-generator",
     ["@semantic-release/changelog", { changelogFile: "CHANGELOG.md" }],
     [
