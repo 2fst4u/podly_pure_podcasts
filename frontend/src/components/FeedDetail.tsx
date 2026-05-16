@@ -869,6 +869,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                           <img
                             src={episode.image_url || currentFeed.image_url}
                             alt={episode.title}
+                            loading="lazy"
                             className="w-16 h-16 rounded-lg object-cover"
                           />
                         ) : (

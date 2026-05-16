@@ -77,6 +77,7 @@ export default function FeedList({ feeds, onFeedDeleted: _onFeedDeleted, onFeedS
                       <img
                         src={feed.image_url}
                         alt={feed.title}
+                        loading="lazy"
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                     ) : (
