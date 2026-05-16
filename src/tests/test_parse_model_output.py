@@ -90,3 +90,50 @@ def test_clean_parse_output_truncated_with_content_type() -> None:
         content_type="promotional_external",
         confidence=0.92,
     )
+
+
+def test_attempt_json_repair_balanced() -> None:
+    """Test _attempt_json_repair returns immediately if brackets are balanced."""
+    from podcast_processor.model_output import _attempt_json_repair
+
+    model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}]}'
+    result = _attempt_json_repair(model_output)
+    assert result == model_output
+
+
+def test_clean_parse_output_truncated_incomplete_key() -> None:
+    """Test parsing truncated JSON with incomplete trailing key."""
+    model_output = (
+        '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],"content_type":'
+    )
+    result = clean_and_parse_model_output(model_output)
+    assert result == AdSegmentPredictionList(
+        ad_segments=[AdSegmentPrediction(segment_offset=12.0, confidence=0.86)],
+    )
+
+
+def test_clean_parse_output_truncated_incomplete_string_value() -> None:
+    """Test parsing truncated JSON with incomplete trailing string value."""
+    model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],"content_type":"prom'
+    result = clean_and_parse_model_output(model_output)
+    assert result == AdSegmentPredictionList(
+        ad_segments=[AdSegmentPrediction(segment_offset=12.0, confidence=0.86)],
+    )
+
+
+def test_clean_parse_output_truncated_trailing_comma() -> None:
+    """Test parsing truncated JSON with incomplete trailing comma."""
+    model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],'
+    result = clean_and_parse_model_output(model_output)
+    assert result == AdSegmentPredictionList(
+        ad_segments=[AdSegmentPrediction(segment_offset=12.0, confidence=0.86)],
+    )
+
+
+def test_clean_parse_output_with_missing_braces() -> None:
+    """Test parse failure on complete garbage without missing but broken JSON"""
+    model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86]'
+    # We still want to see if the parser or repair can handle weird missing cases
+    # Here the string has mismatched brackets vs braces
+    with pytest.raises(ValidationError):
+        clean_and_parse_model_output(model_output)

@@ -1,0 +1,1 @@
+- Encountered `FileNotFoundError` for `ffprobe` when testing audio handling; resolved by installing `ffmpeg` using `apt-get`.
