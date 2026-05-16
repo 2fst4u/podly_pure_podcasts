@@ -332,6 +332,7 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
                       <img
                         src={result.artworkUrl}
                         alt={result.title}
+                        loading="lazy"
                         className="w-16 h-16 rounded-md object-cover"
                       />
                     ) : (
