@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Check for documentation-only changes
         id: check_files
@@ -34,6 +36,17 @@ jobs:
           else
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
+        shell: bash
+
+      - name: Compute dev version
+        if: steps.check_files.outputs.skip == 'false'
+        id: version
+        run: |
+          LAST_TAG=$(git tag -l "v[0-9]*.[0-9]*.[0-9]*" | grep -v -- '-' | sort -V | tail -1)
+          [ -z "$LAST_TAG" ] && LAST_TAG="v0.0.0"
+          BASE_VERSION=${LAST_TAG#v}
+          COMMIT_COUNT=$(git rev-list "${LAST_TAG}..HEAD" --count)
+          echo "version=${BASE_VERSION}-dev.${COMMIT_COUNT}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Set up QEMU
@@ -59,7 +72,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
+            type=raw,value=${{ steps.version.outputs.version }}
             type=raw,value=Dev
 
       - name: Build and push
