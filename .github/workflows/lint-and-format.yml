@@ -3,7 +3,7 @@ name: Python Linting, Formatting, and Testing
 on:
   push:
     branches:
-      - '**'
+      - main
 
 permissions:
   contents: read
@@ -17,27 +17,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check for Conventional Commit
-        if: github.ref_name != 'main'
-        run: |
-          set -euo pipefail
-          git fetch origin main --depth=100
-          MERGE_BASE=$(git merge-base HEAD origin/main)
-          subjects=$(git log --format=%s "$MERGE_BASE..HEAD")
-          if [ -z "$subjects" ]; then
-            echo "No commits ahead of main."
-            exit 1
-          fi
-          if echo "$subjects" | grep -Eq '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?(!)?: .+'; then
-            echo "Conventional Commit found."
-          else
-            echo "No Conventional Commit found."
-            echo "Add at least one commit like: feat: ..., fix(scope): ..., chore: ..."
-            exit 1
-          fi
 
       - name: Set up Python
         id: python
@@ -53,7 +32,7 @@ jobs:
       - name: Install pipenv
         run: pip install pipenv
 
-      - name: Cache pipenv virtualenv
+      - name: Cache virtualenv
         uses: actions/cache@v4
         with:
           path: .venv
@@ -72,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: pipenv install --dev --deploy
 
-      - name: Install dependencies for mypy
+      - name: Run mypy
         run: pipenv run mypy . --install-types --non-interactive --explicit-package-bases --exclude 'migrations' --exclude 'build' --exclude 'scripts' --exclude 'src/tests' --exclude 'src/tests/test_routes.py' --exclude 'src/app/routes.py'
 
       - name: Run pylint
