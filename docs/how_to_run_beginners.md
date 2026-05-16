@@ -86,17 +86,16 @@ docker compose version
 
 You should see version information for both commands.
 
-### 2. Get an OpenAI API Key
+### 2. Get a Groq API Key
 
-1. Go to [OpenAI's API platform](https://platform.openai.com/)
-2. Sign up for an account or log in if you already have one
-3. Navigate to the [API Keys section](https://platform.openai.com/api-keys)
-4. Click "Create new secret key"
-5. Give it a name (e.g., "Podly")
-6. **Important**: Copy the key immediately and save it somewhere safe - you won't be able to see it again!
-7. Your API key will look something like: `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+Podly uses Groq to transcribe podcasts quickly and for free.
 
-> **Note**: OpenAI API usage requires payment. Make sure to set up billing and usage limits in your OpenAI account to avoid unexpected charges.
+1. Go to [Groq's API platform](https://console.groq.com/keys)
+2. Sign up for a free account or log in if you already have one
+3. Click "Create API Key"
+4. Give it a name (e.g., "Podly")
+5. **Important**: Copy the key immediately and save it somewhere safe - you won't be able to see it again!
+6. Your API key will look something like: `gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 
 ## Setup Podly
 
@@ -191,10 +190,10 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 - On macOS/Linux, make sure the script is executable: `chmod +x run_podly_docker.sh`
 - On Windows, try running Command Prompt as Administrator
 
-### OpenAI API errors
+### API Key errors
 
 - Double-check your API key in the Config page at `/config`
-- Make sure you have billing set up in your OpenAI account
+- Make sure you have billing set up in your provider's account if using a paid tier
 - Check your usage limits haven't been exceeded
 
 ### Port 5001 already in use
