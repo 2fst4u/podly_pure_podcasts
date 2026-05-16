@@ -1,3 +1,10 @@
+## [1.0.1-dev.2](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.1-dev.1...v1.0.1-dev.2) (2026-05-16)
+
+
+### Bug Fixes
+
+* **ci:** prevent grep exit-1 from failing changes job ([042e395](https://github.com/2fst4u/podly_pure_podcasts/commit/042e39557f398264bd43a658899dcae23ae46406))
+
 ## [1.0.1-dev.1](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.0...v1.0.1-dev.1) (2026-05-16)
 
 
