@@ -43,7 +43,7 @@ jobs:
             fi
           fi
 
-          non_doc_files=$(echo "$files_changed" | grep -v -E '(\.md$|^docs/|LICENCE)')
+          non_doc_files=$(echo "$files_changed" | grep -v -E '(\.md$|^docs/|LICENCE)' || true)
 
           if [ -z "$non_doc_files" ] && [ "${{ github.ref_type }}" != "tag" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
