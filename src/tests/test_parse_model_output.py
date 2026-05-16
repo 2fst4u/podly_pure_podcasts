@@ -103,6 +103,12 @@ def test_attempt_json_repair_balanced() -> None:
 
 def test_clean_parse_output_truncated_incomplete_key() -> None:
     """Test parsing truncated JSON with incomplete trailing key."""
+    from podcast_processor.model_output import (
+        AdSegmentPrediction,
+        AdSegmentPredictionList,
+        clean_and_parse_model_output,
+    )
+
     model_output = (
         '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],"content_type":'
     )
@@ -114,6 +120,12 @@ def test_clean_parse_output_truncated_incomplete_key() -> None:
 
 def test_clean_parse_output_truncated_incomplete_string_value() -> None:
     """Test parsing truncated JSON with incomplete trailing string value."""
+    from podcast_processor.model_output import (
+        AdSegmentPrediction,
+        AdSegmentPredictionList,
+        clean_and_parse_model_output,
+    )
+
     model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],"content_type":"prom'
     result = clean_and_parse_model_output(model_output)
     assert result == AdSegmentPredictionList(
@@ -123,6 +135,12 @@ def test_clean_parse_output_truncated_incomplete_string_value() -> None:
 
 def test_clean_parse_output_truncated_trailing_comma() -> None:
     """Test parsing truncated JSON with incomplete trailing comma."""
+    from podcast_processor.model_output import (
+        AdSegmentPrediction,
+        AdSegmentPredictionList,
+        clean_and_parse_model_output,
+    )
+
     model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86}],'
     result = clean_and_parse_model_output(model_output)
     assert result == AdSegmentPredictionList(
@@ -132,6 +150,11 @@ def test_clean_parse_output_truncated_trailing_comma() -> None:
 
 def test_clean_parse_output_with_missing_braces() -> None:
     """Test parse failure on complete garbage without missing but broken JSON"""
+    import pytest
+    from pydantic import ValidationError
+
+    from podcast_processor.model_output import clean_and_parse_model_output
+
     model_output = '{"ad_segments":[{"segment_offset":12.0,"confidence":0.86]'
     # We still want to see if the parser or repair can handle weird missing cases
     # Here the string has mismatched brackets vs braces
