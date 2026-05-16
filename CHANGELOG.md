@@ -1,3 +1,10 @@
+## [1.0.1-dev.1](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.0...v1.0.1-dev.1) (2026-05-16)
+
+
+### Bug Fixes
+
+* resolve merge conflicts between PR2 and main ([de50ccb](https://github.com/2fst4u/podly_pure_podcasts/commit/de50ccb592a163ed8e2f9041affa06ef664ea8a7))
+
 # [1.0.0-dev.2](https://github.com/2fst4u/podly_pure_podcasts/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-05-16)
 
 # 1.0.0 (2026-05-16)
