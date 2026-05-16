@@ -14,8 +14,17 @@ const resolveRepositoryUrl = () => {
   }
 };
 
+const branches = ["main"];
+if (
+  process.env.GITHUB_REF_NAME &&
+  process.env.GITHUB_REF_NAME !== "main" &&
+  !process.env.GITHUB_REF_NAME.startsWith("v")
+) {
+  branches.push({ name: process.env.GITHUB_REF_NAME, prerelease: "dev" });
+}
+
 module.exports = {
-  branches: ["main", { name: "*", prerelease: "dev" }],
+  branches,
   repositoryUrl: resolveRepositoryUrl(),
   tagFormat: "v${version}",
   plugins: [
