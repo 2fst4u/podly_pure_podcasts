@@ -85,6 +85,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
+            type=semver,pattern=Dev-{{version}},enable=${{ contains(github.ref_name, 'dev') }}
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
@@ -134,6 +135,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
+            type=semver,pattern=Dev-{{version}},enable=${{ contains(github.ref_name, 'dev') }}
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
@@ -173,6 +175,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
+            type=semver,pattern=Dev-{{version}},enable=${{ contains(github.ref_name, 'dev') }}
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=Dev,enable=${{ github.ref_name != 'main' && (github.ref_type != 'tag' || contains(github.ref_name, 'dev')) }}
 
