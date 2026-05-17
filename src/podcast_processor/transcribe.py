@@ -86,7 +86,6 @@ class LocalWhisperTranscriber(Transcriber):
         return [seg.to_segment() for seg in local_segments]
 
     def transcribe(self, audio_file_path: str) -> List[Segment]:
-        # Import whisper only when needed to avoid CUDA dependencies during module import
         try:
             import whisper  # type: ignore[import-untyped]
         except ImportError as e:
@@ -99,11 +98,11 @@ class LocalWhisperTranscriber(Transcriber):
         models = whisper.available_models()
         self.logger.info(f"Available models: {models}")
 
-        model = whisper.load_model(name=self.whisper_model)
+        model = whisper.load_model(name=self.whisper_model, device="cpu")
 
         self.logger.info("Beginning transcription")
         start = time.time()
-        result = model.transcribe(audio_file_path, fp16=False, language="English")
+        result = model.transcribe(audio_file_path, language="English")
         end = time.time()
         elapsed = end - start
         self.logger.info(f"Transcription completed in {elapsed}")

@@ -34,8 +34,6 @@ whisper_mock.load_model.return_value = MagicMock()
 whisper_mock.load_model.return_value.transcribe.return_value = {"segments": []}
 
 torch_mock = MagicMock()
-torch_mock.cuda = MagicMock()
-torch_mock.device = MagicMock()
 
 # Pre-mock the modules to avoid imports during test collection
 sys.modules["whisper"] = whisper_mock
