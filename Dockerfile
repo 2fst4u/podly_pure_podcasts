@@ -30,10 +30,11 @@ WORKDIR /build
 
 COPY Pipfile Pipfile.lock ./
 
-# Generate pinned requirements from lock file, stripping torch and GPU-only packages.
+# Generate pinned requirements from lock file, stripping torch and all GPU-only packages.
 # We install torch separately from the CPU-only wheel index to avoid pulling CUDA libraries.
+# nvidia-* packages are transitive deps of the CUDA torch wheel and not needed for CPU-only.
 RUN pip install --no-cache-dir pipenv && \
-    pipenv requirements | grep -v -E '^(torch|torchvision|torchaudio|triton)' > /tmp/requirements.txt
+    pipenv requirements | grep -v -E '^(torch|torchvision|torchaudio|triton|nvidia-)' > /tmp/requirements.txt
 
 # Install CPU-only PyTorch — avoids ~2-4 GB of CUDA libraries shipped in the default PyPI wheel
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
