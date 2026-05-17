@@ -10,8 +10,6 @@ docker compose up       # foreground with logs
 docker compose up -d    # or detached
 ```
 
-This automatically detects NVIDIA GPUs and uses them if available.
-
 After the server starts:
 
 - Open `http://localhost:5001` in your browser
@@ -142,7 +140,7 @@ If no Conventional Commit is present, the release pipeline will have nothing to 
 
 ## Docker Support
 
-Podly can be run in Docker with support for both NVIDIA GPU and non-NVIDIA environments. By default, `compose.yml` pulls pre-built images from GitHub Container Registry.
+Podly can be run in Docker. By default, `compose.yml` pulls pre-built images from GitHub Container Registry.
 
 ### Common Commands
 
@@ -164,7 +162,6 @@ BRANCH=main-latest docker compose up -d
 **Environment Variables**:
 
 - `PUID`/`PGID`: User/group IDs for file permissions
-- `CUDA_VISIBLE_DEVICES`: GPU device selection for CUDA acceleration
 - `CORS_ORIGINS`: Backend CORS configuration (defaults to accept requests from any origin)
 
 ## FAQ

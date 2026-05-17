@@ -30,13 +30,11 @@ WORKDIR /build
 
 COPY Pipfile Pipfile.lock ./
 
-# Generate pinned requirements from lock file, stripping torch and all GPU-only packages.
-# We install torch separately from the CPU-only wheel index to avoid pulling CUDA libraries.
-# nvidia-* packages are transitive deps of the CUDA torch wheel and not needed for CPU-only.
+# Generate pinned requirements from lock file, stripping torch so we can install the CPU-only wheel.
 RUN pip install --no-cache-dir pipenv && \
     pipenv requirements | grep -v -E '^(torch|torchvision|torchaudio|triton|nvidia-)' > /tmp/requirements.txt
 
-# Install CPU-only PyTorch — avoids ~2-4 GB of CUDA libraries shipped in the default PyPI wheel
+# Install CPU-only PyTorch wheel (~500 MB vs ~2-4 GB for the default GPU wheel).
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining Python packages (torch already present, openai-whisper will reuse it)
