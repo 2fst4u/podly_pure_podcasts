@@ -16,40 +16,53 @@ RUN set -e && \
     test -d dist && \
     echo "Frontend build successful - dist directory created"
 
-# Backend stage
+# Python builder stage - compiles packages, kept separate to exclude build tools from final image
+FROM python:3.11-slim AS python-builder
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libsqlite3-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+COPY Pipfile Pipfile.lock ./
+
+# Generate pinned requirements from lock file, stripping torch and all GPU-only packages.
+# We install torch separately from the CPU-only wheel index to avoid pulling CUDA libraries.
+# nvidia-* packages are transitive deps of the CUDA torch wheel and not needed for CPU-only.
+RUN pip install --no-cache-dir pipenv && \
+    pipenv requirements | grep -v -E '^(torch|torchvision|torchaudio|triton|nvidia-)' > /tmp/requirements.txt
+
+# Install CPU-only PyTorch — avoids ~2-4 GB of CUDA libraries shipped in the default PyPI wheel
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining Python packages (torch already present, openai-whisper will reuse it)
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Backend runtime stage
 FROM python:3.11-slim AS backend
 
-# Environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install dependencies
-RUN if [ -f /etc/debian_version ]; then \
-    apt-get update && \
+# Runtime system dependencies only — no build tools needed here
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ca-certificates \
     ffmpeg \
     sqlite3 \
-    libsqlite3-dev \
-    build-essential \
     gosu && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ; \
-    fi
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Copy Pipfiles/lock files
-COPY Pipfile Pipfile.lock ./
-
-# Remove problematic distutils-installed packages that may conflict
-RUN if [ -f /etc/debian_version ]; then \
-    apt-get remove -y python3-blinker 2>/dev/null || true; \
-    fi
-
-# Install pipenv and dependencies
-RUN pip install --no-cache-dir pipenv && \
-    pipenv install --deploy --system
+# Copy compiled Python packages from builder stage
+COPY --from=python-builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=python-builder /usr/local/bin /usr/local/bin
 
 # Copy application code
 COPY src/ ./src/
@@ -76,6 +89,5 @@ RUN chmod 755 /docker-entrypoint.sh
 
 EXPOSE 5001
 
-# Run the application through the entrypoint script
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["./scripts/start_services.sh"]
