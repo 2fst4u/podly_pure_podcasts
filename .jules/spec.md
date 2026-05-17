@@ -1,0 +1,4 @@
+- Bypassing beartype during tests required monkey patching `__wrapped__` function due to decorator issue.
+- Updated  to use timezone-aware datetime per pytest warnings.
+- Updated ProcessingStatusManager to use timezone-aware datetime per pytest warnings.
+- Verified full test suite including formatting and static typing passes.
