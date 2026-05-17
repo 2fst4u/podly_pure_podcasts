@@ -197,6 +197,7 @@ export default function AudioPlayer() {
                 onClick={togglePlayPause}
                 disabled={isLoading}
                 className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label={isPlaying ? "Pause" : "Play"}
               >
                 {isLoading ? (
                   <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -249,6 +250,7 @@ export default function AudioPlayer() {
               onClick={toggleMute}
               onMouseEnter={() => setShowVolumeSlider(true)}
               className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
+              aria-label={volume === 0 ? "Unmute" : "Mute"}
             >
               {volume === 0 ? (
                 <SpeakerXMarkIcon className="w-5 h-5" />
