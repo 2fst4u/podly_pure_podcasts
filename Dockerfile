@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Multi-stage build for combined frontend and backend
 FROM node:18-alpine AS frontend-build
 
@@ -35,10 +36,13 @@ RUN pip install --no-cache-dir pipenv && \
     pipenv requirements | grep -v -E '^(torch|torchvision|torchaudio|triton|nvidia-)' > /tmp/requirements.txt
 
 # Install CPU-only PyTorch wheel (~500 MB vs ~2-4 GB for the default GPU wheel).
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# Cache mount keeps the downloaded wheel across rebuilds so re-installs skip the large download.
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining Python packages (torch already present, openai-whisper will reuse it)
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /tmp/requirements.txt
 
 # Backend runtime stage
 FROM python:3.11-slim AS backend
