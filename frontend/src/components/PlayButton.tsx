@@ -71,6 +71,7 @@ export default function PlayButton({ episode, className = '' }: PlayButtonProps)
           : 'bg-blue-600 text-white hover:bg-blue-700'
       } ${className}`}
       title={title}
+      aria-label={title}
     >
       {isLoading && isCurrentEpisode ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
