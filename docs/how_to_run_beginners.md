@@ -121,7 +121,7 @@ docker compose up -d         # detached
 
 The Docker image reads environment variables from `.env` files or your shell. To require login:
 
-1. Export the variables before running Podly, or add them to `config/.env`:
+1. Export the variables before running Podly, or add them to `.env.local`:
 
 ```bash
 export REQUIRE_AUTH=true
@@ -193,7 +193,7 @@ docker compose build --no-cache
 ### Port 5001 already in use
 
 - Another application is using port 5001
-- **Docker users**: Either stop that application or modify the port in `compose.dev.cpu.yml` and `compose.yml`
+- **Docker users**: Either stop that application or modify the port in `compose.yml`
 - **Native users**: Change the port in the Config page under App settings
 - To kill processes on that port run `lsof -i :5001 | grep LISTEN | awk '{print $2}' | xargs kill -9`
 
@@ -206,10 +206,12 @@ docker compose build --no-cache
 To stop the application:
 
 If you have launched it in the foreground by omitting the `-d` parameter:
+
 1. In the terminal where Podly is running, press `Ctrl+C`
 2. Wait for the container to stop gracefully
 
 If you have launched it in the background using the `-d` parameter:
+
 1. In the terminal where Podly is running, execute `docker compose down`
 2. Wait for the container to stop gracefully
 
@@ -224,6 +226,7 @@ In both cases this output should appear to indicate that it has stopped:
 ## Upgrading Podly
 
 To upgrade the application while you are in the terminal where it is running:
+
 1. [Stop it](#stopping-podly)
 2. Execute `git pull`
 3. [Run it again](#running-podly)
