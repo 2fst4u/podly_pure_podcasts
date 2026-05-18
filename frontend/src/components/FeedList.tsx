@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import type { Feed } from '../types';
 
@@ -9,16 +9,27 @@ interface FeedListProps {
   selectedFeedId?: number;
 }
 
-export default function FeedList({ feeds, onFeedDeleted: _onFeedDeleted, onFeedSelected, selectedFeedId }: FeedListProps) {
+export default function FeedList({ feeds, onFeedSelected, selectedFeedId }: FeedListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const { requireAuth, user } = useAuth();
   const showMembership = Boolean(requireAuth && user?.role === 'admin');
 
-  // Ensure feeds is an array
-  const feedsArray = Array.isArray(feeds) ? feeds : [];
+  // ⚡ Bolt: Debounce search term to prevent filtering list on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
 
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Ensure feeds is an array (⚡ Bolt: memoized to prevent unnecessary re-renders)
+  const feedsArray = useMemo(() => Array.isArray(feeds) ? feeds : [], [feeds]);
+
+  // ⚡ Bolt: Filter based on debounced term to reduce CPU usage and unnecessary React re-renders when typing fast
   const filteredFeeds = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
+    const term = debouncedSearchTerm.trim().toLowerCase();
     if (!term) {
       return feedsArray;
     }
@@ -27,7 +38,7 @@ export default function FeedList({ feeds, onFeedDeleted: _onFeedDeleted, onFeedS
       const author = feed.author?.toLowerCase() ?? '';
       return title.includes(term) || author.includes(term);
     });
-  }, [feedsArray, searchTerm]);
+  }, [feedsArray, debouncedSearchTerm]);
 
   if (feedsArray.length === 0) {
     return (
