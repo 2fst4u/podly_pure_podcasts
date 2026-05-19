@@ -14,15 +14,15 @@ The frontend is integrated into the main Podly application and served as static 
 
    ```bash
    cd frontend
-   npm install
-   npm run dev
+   pnpm install
+   pnpm run dev
    ```
 
    This starts the Vite development server on port 5173 with hot reloading and proxies API calls to the backend on port 5001.
 
 ### Build Process
 
-- **Direct Development** (`npm run dev`): Vite dev server serves files with hot reloading on port 5173 and proxies API calls to backend on port 5001
+- **Direct Development** (`pnpm run dev`): Vite dev server serves files with hot reloading on port 5173 and proxies API calls to backend on port 5001
 - **Docker**: Multi-stage build compiles frontend assets during image creation and copies them to the Flask static directory
 
 ## Technology Stack
