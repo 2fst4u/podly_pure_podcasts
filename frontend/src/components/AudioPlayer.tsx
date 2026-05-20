@@ -196,7 +196,7 @@ export default function AudioPlayer() {
               <button
                 onClick={togglePlayPause}
                 disabled={isLoading}
-                className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
                 {isLoading ? (
@@ -226,7 +226,24 @@ export default function AudioPlayer() {
               <span className="w-10 text-right">{formatTime(displayTime)}</span>
               <div
                 ref={progressBarRef}
-                className="flex-1 h-1 bg-gray-200 rounded-full cursor-pointer relative group audio-player-progress"
+                className="flex-1 h-1 bg-gray-200 rounded-full cursor-pointer relative group audio-player-progress focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                role="slider"
+                tabIndex={0}
+                aria-label="Seek time"
+                aria-valuemin={0}
+                aria-valuemax={Math.round(duration || 100)}
+                aria-valuenow={Math.round(displayTime)}
+                aria-valuetext={formatTime(displayTime)}
+                onKeyDown={(e) => {
+                  if (!duration) return;
+                  if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    seekTo(Math.min(duration, currentTime + 10));
+                  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    seekTo(Math.max(0, currentTime - 10));
+                  }
+                }}
                 onMouseDown={handleProgressMouseDown}
                 onMouseMove={handleProgressMouseMove}
                 onMouseUp={handleProgressMouseUp}
@@ -249,7 +266,7 @@ export default function AudioPlayer() {
             <button
               onClick={toggleMute}
               onMouseEnter={() => setShowVolumeSlider(true)}
-              className="p-1 text-gray-600 hover:text-gray-900 transition-colors"
+              className="p-1 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 rounded"
               aria-label={volume === 0 ? "Unmute" : "Mute"}
             >
               {volume === 0 ? (
@@ -266,8 +283,24 @@ export default function AudioPlayer() {
                 onMouseEnter={() => setShowVolumeSlider(true)}
               >
                 <div
-                  className="w-20 h-1 bg-gray-200 rounded-full cursor-pointer relative group"
+                  className="w-20 h-1 bg-gray-200 rounded-full cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                   onClick={handleVolumeChange}
+                  role="slider"
+                  tabIndex={0}
+                  aria-label="Volume"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(volume * 100)}
+                  aria-valuetext={`${Math.round(volume * 100)}%`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      setVolume(Math.min(1, volume + 0.1));
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      setVolume(Math.max(0, volume - 0.1));
+                    }
+                  }}
                 >
                   <div
                     className="h-full bg-gray-900 rounded-full relative"
