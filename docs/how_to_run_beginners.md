@@ -103,7 +103,7 @@ You should see version information for both commands.
 ### Download the Project
 
 ```bash
-git clone https://github.com/normand1/podly_pure_podcasts.git
+git clone https://github.com/2fst4u/podly_pure_podcasts.git
 cd podly_pure_podcasts
 ```
 
