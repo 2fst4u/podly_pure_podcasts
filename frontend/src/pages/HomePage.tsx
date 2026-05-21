@@ -135,8 +135,9 @@ export default function HomePage() {
             )}
             <button
               onClick={handleCopyAggregateLink}
-              className="flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
+              className="flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               title="Copy your aggregate feed URL (last 3 episodes from each feed)"
+              aria-label="Copy your aggregate feed URL"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
