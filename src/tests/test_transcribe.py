@@ -8,40 +8,108 @@ from openai.types.audio.transcription_segment import TranscriptionSegment
 # from pytest_mock import MockerFixture
 
 
-@pytest.mark.skip
-def test_remote_transcribe() -> None:
+def test_remote_transcribe(mocker: Any) -> None:
     # import here instead of the toplevel because torch is not installed properly in CI.
+    mocker.patch.dict("sys.modules", {"torch": MagicMock(), "whisper": MagicMock()})
     from podcast_processor.transcribe import (  # pylint: disable=import-outside-toplevel
         OpenAIWhisperTranscriber,
     )
+    from shared.config import (  # pylint: disable=import-outside-toplevel
+        RemoteWhisperConfig,
+    )
 
     logger = logging.getLogger("global_logger")
-    from shared.test_utils import create_standard_test_config
-
-    config = create_standard_test_config().model_dump()
+    config = RemoteWhisperConfig(api_key="test-key")
 
     transcriber = OpenAIWhisperTranscriber(logger, config)
 
+    # Mock file operations
+    mocker.patch("builtins.open", mocker.mock_open(read_data="test audio data"))
+    mocker.patch("pathlib.Path.exists", return_value=True)
+    mocker.patch(
+        "podcast_processor.transcribe.split_audio", return_value=[("test.mp3", 0)]
+    )
+    mocker.patch("shutil.rmtree")
+
+    mock_transcription = MagicMock()
+
+    mock_transcription.segments = [
+        TranscriptionSegment(
+            id=1,
+            avg_logprob=2,
+            seek=6,
+            temperature=7,
+            text="This is a test segment.",
+            tokens=[],
+            compression_ratio=3,
+            no_speech_prob=4,
+            start=0.0,
+            end=1.0,
+        ),
+        TranscriptionSegment(
+            id=2,
+            avg_logprob=2,
+            seek=6,
+            temperature=7,
+            text="This is another test segment.",
+            tokens=[],
+            compression_ratio=3,
+            no_speech_prob=4,
+            start=1.0,
+            end=2.0,
+        ),
+    ]
+
+    mocker.patch.object(
+        transcriber.openai_client.audio.transcriptions,
+        "create",
+        return_value=mock_transcription,
+    )
+
     transcription = transcriber.transcribe("file.mp3")
-    assert transcription == []
+    assert len(transcription) == 2
+    assert transcription[0].text == "This is a test segment."
 
 
-@pytest.mark.skip
-def test_local_transcribe() -> None:
+def test_local_transcribe(mocker: Any) -> None:
     # import here instead of the toplevel because torch is not installed properly in CI.
+    mock_whisper = MagicMock()
+    mock_model = MagicMock()
+    mock_model.transcribe.return_value = {
+        "segments": [
+            {
+                "id": 1,
+                "seek": 0,
+                "start": 0.0,
+                "end": 1.0,
+                "text": "This is a test segment.",
+                "tokens": [],
+                "temperature": 0.0,
+                "avg_logprob": -0.1,
+                "compression_ratio": 1.0,
+                "no_speech_prob": 0.05,
+            }
+        ]
+    }
+    mock_whisper.load_model.return_value = mock_model
+    mock_whisper.available_models.return_value = ["base.en"]
+    mocker.patch.dict("sys.modules", {"torch": MagicMock(), "whisper": mock_whisper})
+
     from podcast_processor.transcribe import (  # pylint: disable=import-outside-toplevel
         LocalWhisperTranscriber,
     )
 
     logger = logging.getLogger("global_logger")
     transcriber = LocalWhisperTranscriber(logger, "base.en")
+
     transcription = transcriber.transcribe("src/tests/file.mp3")
-    assert transcription == []
+    assert len(transcription) == 1
+    assert transcription[0].text == "This is a test segment."
 
 
-@pytest.mark.skip
 def test_groq_transcribe(mocker: Any) -> None:
     # import here instead of the toplevel because dependencies aren't installed properly in CI.
+    mocker.patch.dict("sys.modules", {"torch": MagicMock(), "whisper": MagicMock()})
     from podcast_processor.transcribe import (  # pylint: disable=import-outside-toplevel
         GroqWhisperTranscriber,
     )
@@ -49,21 +117,12 @@ def test_groq_transcribe(mocker: Any) -> None:
         GroqWhisperConfig,
     )
 
-    # Mock the requests call
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "segments": [
-            {"start": 0.0, "end": 1.0, "text": "This is a test segment."},
-            {"start": 1.0, "end": 2.0, "text": "This is another test segment."},
-        ]
-    }
-    mocker.patch("requests.post", return_value=mock_response)
-
     # Mock file operations
     mocker.patch("builtins.open", mocker.mock_open(read_data="test audio data"))
     mocker.patch("pathlib.Path.exists", return_value=True)
-    mocker.patch("podcast_processor.audio.split_audio", return_value=[("test.mp3", 0)])
+    mocker.patch(
+        "podcast_processor.transcribe.split_audio", return_value=[("test.mp3", 0)]
+    )
     mocker.patch("shutil.rmtree")
 
     logger = logging.getLogger("global_logger")
@@ -72,6 +131,19 @@ def test_groq_transcribe(mocker: Any) -> None:
     )
 
     transcriber = GroqWhisperTranscriber(logger, config)
+
+    # Mock the groq client call
+    mock_transcription = MagicMock()
+    mock_transcription.segments = [
+        {"start": 0.0, "end": 1.0, "text": "This is a test segment."},
+        {"start": 1.0, "end": 2.0, "text": "This is another test segment."},
+    ]
+    mocker.patch.object(
+        transcriber.client.audio.transcriptions,
+        "create",
+        return_value=mock_transcription,
+    )
+
     transcription = transcriber.transcribe("test.mp3")
 
     assert len(transcription) == 2
@@ -79,8 +151,9 @@ def test_groq_transcribe(mocker: Any) -> None:
     assert transcription[1].text == "This is another test segment."
 
 
-def test_offset() -> None:
+def test_offset(mocker: Any) -> None:
     # import here instead of the toplevel because torch is not installed properly in CI.
+    mocker.patch.dict("sys.modules", {"torch": MagicMock(), "whisper": MagicMock()})
     from podcast_processor.transcribe import (  # pylint: disable=import-outside-toplevel
         OpenAIWhisperTranscriber,
     )
