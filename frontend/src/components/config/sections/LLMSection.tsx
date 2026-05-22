@@ -64,6 +64,7 @@ export default function LLMSection() {
                 className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50"
                 onClick={() => setShowBaseUrlInfo((v) => !v)}
                 title="When is this used?"
+                aria-label="More information about OpenAI Base URL"
               >
                 ⓘ
               </button>
