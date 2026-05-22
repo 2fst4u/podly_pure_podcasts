@@ -86,9 +86,11 @@ docker compose version
 
 You should see version information for both commands.
 
-### 2. Get a Groq API Key
+### 2. Get an API Key (Groq or OpenAI)
 
-Podly uses Groq by default for both LLM and Whisper transcription as it provides a generous free tier.
+Podly requires an API key to run its transcription and LLM services. It uses Groq by default as it provides a generous free tier, but OpenAI is also fully supported.
+
+#### Option A: Groq (Recommended Default)
 
 1. Go to [Groq's Console](https://console.groq.com/)
 2. Sign up for an account or log in if you already have one
@@ -98,7 +100,17 @@ Podly uses Groq by default for both LLM and Whisper transcription as it provides
 6. **Important**: Copy the key immediately and save it somewhere safe - you won't be able to see it again!
 7. Your API key will look something like: `gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 
-> **Note**: Podly also supports OpenAI and other providers if you prefer to set them up later in the Config page.
+#### Option B: OpenAI
+
+1. Go to [OpenAI's API platform](https://platform.openai.com/)
+2. Sign up for an account or log in if you already have one
+3. Navigate to the [API Keys section](https://platform.openai.com/api-keys)
+4. Click "Create new secret key"
+5. Give it a name (e.g., "Podly")
+6. **Important**: Copy the key immediately and save it somewhere safe - you won't be able to see it again!
+7. Your API key will look something like: `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+> **Note**: OpenAI API usage requires payment. Make sure to set up billing and usage limits in your OpenAI account to avoid unexpected charges.
 
 ## Setup Podly
 
