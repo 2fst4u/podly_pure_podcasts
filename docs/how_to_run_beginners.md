@@ -86,17 +86,19 @@ docker compose version
 
 You should see version information for both commands.
 
-### 2. Get an OpenAI API Key
+### 2. Get a Groq API Key
 
-1. Go to [OpenAI's API platform](https://platform.openai.com/)
+Podly uses Groq by default for both LLM and Whisper transcription as it provides a generous free tier.
+
+1. Go to [Groq's Console](https://console.groq.com/)
 2. Sign up for an account or log in if you already have one
-3. Navigate to the [API Keys section](https://platform.openai.com/api-keys)
-4. Click "Create new secret key"
+3. Navigate to the API Keys section
+4. Click "Create API Key"
 5. Give it a name (e.g., "Podly")
 6. **Important**: Copy the key immediately and save it somewhere safe - you won't be able to see it again!
-7. Your API key will look something like: `sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+7. Your API key will look something like: `gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 
-> **Note**: OpenAI API usage requires payment. Make sure to set up billing and usage limits in your OpenAI account to avoid unexpected charges.
+> **Note**: Podly also supports OpenAI and other providers if you prefer to set them up later in the Config page.
 
 ## Setup Podly
 
@@ -184,11 +186,11 @@ docker compose build --no-cache
 - On Linux, make sure your user is in the `docker` group (see installation steps above)
 - On Windows, try running Command Prompt as Administrator
 
-### OpenAI API errors
+### API errors (Groq / OpenAI)
 
 - Double-check your API key in the Config page at `/config`
-- Make sure you have billing set up in your OpenAI account
-- Check your usage limits haven't been exceeded
+- If using a paid provider like OpenAI, make sure you have billing set up in your account
+- Check your usage limits or rate limits haven't been exceeded
 
 ### Port 5001 already in use
 
