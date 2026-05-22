@@ -198,9 +198,6 @@ export interface ManagedUser extends AuthUser {
   last_active?: string | null;
 }
 
-export interface DiscordStatus {
-  enabled: boolean;
-}
 
 export interface BillingSummary {
   feed_allowance: number;
