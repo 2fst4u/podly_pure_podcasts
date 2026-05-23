@@ -30,11 +30,11 @@ Once the server is running:
 
 Podly supports multiple options for audio transcription:
 
-1. **Local Whisper (Default)**
+1. **Local Whisper**
    - Slower but self-contained
 2. **OpenAI Hosted Whisper**
    - Fast and accurate; billed per-feed via Stripe
-3. **Groq Hosted Whisper**
+3. **Groq Hosted Whisper (Default)**
    - Fast and cost-effective
 
 Select your preferred method in the Config page (`/config`).
@@ -169,7 +169,6 @@ BRANCH=main-latest docker compose up -d
 Q: What does "whitelisted" mean in the UI?
 
 A: It means an episode is eligible for download and ad removal. By default, new episodes are automatically whitelisted (`automatically_whitelist_new_episodes`), and only a limited number of old episodes are auto-whitelisted (`number_of_episodes_to_whitelist_from_archive_of_new_feed`). Adjust these settings in the Config page (/config).
-
 
 ## Contributing
 
