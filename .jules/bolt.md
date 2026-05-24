@@ -5,3 +5,6 @@
 ## 2026-05-18 - Input Debouncing
 **Learning:** Implementing debouncing for fast-typing inputs combined with heavy client-side filtering prevents excessive re-rendering and CPU spikes. Memoizing default array fallbacks also avoids downstream re-renders.
 **Action:** Add `useMemo` and debounced states to frequently updated search filters, especially when the lists being filtered are large.
+## 2026-05-18 - Extracting formatTime in AudioPlayer
+**Learning:** Moving pure formatting functions outside of React components avoids re-creating the function reference on every re-render, which is particularly beneficial in frequently rendering components like an AudioPlayer.
+**Action:** Always extract pure utility functions (like time formatting) outside of the component body, especially in components that re-render frequently due to time updates.
