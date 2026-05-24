@@ -2,89 +2,6 @@
 
 This guide will walk you through setting up Podly from scratch using Docker. Podly creates ad-free RSS feeds for podcasts by automatically detecting and removing advertisement segments.
 
-## Highly Recommend!
-
-Want an expert to guide you through the setup? Download an AI powered IDE like cursor https://www.cursor.com/ or windsurf https://windsurf.com/
-
-Most IDEs have a free tier you can use to get started. Alternatively, you can use your own [LLM API key in Cursor](https://docs.cursor.com/settings/api-keys) (you'll need a key for Podly anyways).
-
-Open the AI chat in the IDE. Enable 'Agent' mode if available, which will allow the IDE to help you run commands, view the output, and debug or take corrective steps if necessary.
-
-Paste one of the prompts below into the chat box.
-
-If you don't have the repo downloaded:
-
-```
-Help me install docker and run Podly https://github.com/podly-pure-podcasts/podly_pure_podcasts
-After the project is cloned, help me:
-- install docker & docker compose
-- run `docker compose up -d`
-- configure the app via the web UI at http://localhost:5001/config
-Be sure to check if a dependency is already installed before downloading.
-We recommend Docker because installing ffmpeg & local whisper can be difficult.
-The Docker image has both ffmpeg & local whisper preconfigured.
-Podly works with many different LLMs, it does not require an OpenAI key.
-Check your work by retrieving the index page from localhost:5001 at the end.
-```
-
-If you do have the repo pulled, open this file and prompt:
-
-```
-Review this project, follow this guide and start Podly on my computer.
-Briefly, help me:
-- install docker & docker compose
-- run `docker compose up -d`
-- configure the app via the web UI at http://localhost:5001/config
-Be sure to check if a dependency is already installed before downloading.
-We recommend docker because installing ffmpeg & local whisper can be difficult.
-The docker image has both ffmpeg & local whisper preconfigured.
-Podly works with many different LLMs; it does not need to work with OpenAI.
-Check your work by retrieving the index page from localhost:5001 at the end.
-```
-
-## Prerequisites
-
-### Install Docker and Docker Compose
-
-#### On Windows:
-
-1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
-2. During installation, make sure "Use WSL 2 instead of Hyper-V" is checked
-3. Restart your computer when prompted
-4. Open Docker Desktop and wait for it to start completely
-
-#### On macOS:
-
-1. Download and install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
-2. Drag Docker to your Applications folder
-3. Launch Docker Desktop from Applications
-4. Follow the setup assistant
-
-#### On Linux (Ubuntu/Debian):
-
-```bash
-# Update package index
-sudo apt update
-
-# Install Docker
-sudo apt install docker.io docker-compose-v2
-
-# Add your user to the docker group
-sudo usermod -aG docker $USER
-
-# Log out and log back in for group changes to take effect
-```
-
-#### Verify Installation:
-
-Open a terminal/command prompt and run:
-
-```bash
-docker --version
-docker compose version
-```
-
-You should see version information for both commands.
 
 ### 2. Get an API Key (Groq or OpenAI)
 
@@ -112,14 +29,6 @@ Podly requires an API key to run its transcription and LLM services. It uses Gro
 
 > **Note**: OpenAI API usage requires payment. Make sure to set up billing and usage limits in your OpenAI account to avoid unexpected charges.
 
-## Setup Podly
-
-### Download the Project
-
-```bash
-git clone https://github.com/2fst4u/podly_pure_podcasts.git
-cd podly_pure_podcasts
-```
 
 ## Running Podly
 
@@ -226,26 +135,3 @@ In both cases this output should appear to indicate that it has stopped:
  ✔ Container podly-pure-podcasts        Removed
  ✔ Network podly-pure-podcasts-network  Removed
 ```
-
-## Upgrading Podly
-
-To upgrade the application while you are in the terminal where it is running:
-
-1. [Stop it](#stopping-podly)
-2. Execute `git pull`
-3. [Run it again](#running-podly)
-
-## Getting Help
-
-If you encounter issues ask in our discord, we're friendly!
-
-https://discord.gg/FRB98GtF6N
-
-## What's Next?
-
-Once you have Podly running:
-
-- Explore the web interface to add more podcasts
-- Configure settings in the Config page
-- Consider setting up automatic background processing
-- Enjoy your ad-free podcasts!
