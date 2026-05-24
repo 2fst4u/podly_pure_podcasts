@@ -18,7 +18,7 @@ If you don't have the repo downloaded:
 Help me install docker and run Podly https://github.com/podly-pure-podcasts/podly_pure_podcasts
 After the project is cloned, help me:
 - install docker & docker compose
-- run `docker compose build` then `docker compose up -d`
+- run `docker compose up -d`
 - configure the app via the web UI at http://localhost:5001/config
 Be sure to check if a dependency is already installed before downloading.
 We recommend Docker because installing ffmpeg & local whisper can be difficult.
@@ -33,7 +33,7 @@ If you do have the repo pulled, open this file and prompt:
 Review this project, follow this guide and start Podly on my computer.
 Briefly, help me:
 - install docker & docker compose
-- run `docker compose build` and then `docker compose up -d`
+- run `docker compose up -d`
 - configure the app via the web UI at http://localhost:5001/config
 Be sure to check if a dependency is already installed before downloading.
 We recommend docker because installing ffmpeg & local whisper can be difficult.
@@ -126,7 +126,7 @@ cd podly_pure_podcasts
 ### Run the Application via Docker
 
 ```bash
-docker compose build
+cp .env.local.example .env.local
 docker compose up            # foreground
 docker compose up -d         # detached
 ```
@@ -155,16 +155,6 @@ export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 3. Open your browser to `http://localhost:5001`
 4. Configure settings at `http://localhost:5001/config`
    - Alternatively, set secrets via Docker env file `.env.local` in the project root and restart the container. See .env.local.example
-
-## Advanced Options
-
-```bash
-# Just build the container without running
-docker compose build
-
-# Test build from scratch (useful for troubleshooting)
-docker compose build --no-cache
-```
 
 ## Using Podly
 
