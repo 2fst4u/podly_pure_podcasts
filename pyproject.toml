@@ -21,7 +21,7 @@ mypy_path = "src"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
-addopts = "--cov=src --cov-fail-under=55.77"
+addopts = "--cov=src --cov-fail-under=55.79"
 
 [tool.black]
 line-length = 88
