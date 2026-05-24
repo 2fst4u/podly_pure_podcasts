@@ -32,6 +32,21 @@ const XMarkIcon = ({ className }: { className: string }) => (
   </svg>
 );
 
+// ⚡ Bolt: Moved pure formatting function outside the component
+// Why: Prevents re-creating the function reference on every re-render.
+// Impact: Audio players re-render constantly (e.g., every second to update progress). This saves repeated memory allocation and garbage collection overhead.
+const formatTime = (seconds: number) => {
+  if (isNaN(seconds)) return '0:00';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
 export default function AudioPlayer() {
   const {
     currentEpisode,
@@ -87,18 +102,6 @@ export default function AudioPlayer() {
     error,
     duration
   });
-
-  const formatTime = (seconds: number) => {
-    if (isNaN(seconds)) return '0:00';
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!progressBarRef.current || !duration) return;
