@@ -2,7 +2,6 @@
 
 This guide will walk you through setting up Podly from scratch using Docker. Podly creates ad-free RSS feeds for podcasts by automatically detecting and removing advertisement segments.
 
-
 ### 2. Get an API Key (Groq or OpenAI)
 
 Podly requires an API key to run its transcription and LLM services. It uses Groq by default as it provides a generous free tier, but OpenAI is also fully supported.
@@ -29,7 +28,6 @@ Podly requires an API key to run its transcription and LLM services. It uses Gro
 
 > **Note**: OpenAI API usage requires payment. Make sure to set up billing and usage limits in your OpenAI account to avoid unexpected charges.
 
-
 ## Running Podly
 
 ### Run the Application via Docker
@@ -42,15 +40,15 @@ docker compose up -d         # detached
 
 ### Optional: Enable Authentication
 
-The Docker image reads environment variables from `.env` files or your shell. To require login:
+The Docker image reads environment variables from `.env` files. To require login:
 
-1. Export the variables before running Podly, or add them to `.env.local`:
+1. Add the following variables to `.env.local`:
 
 ```bash
-export REQUIRE_AUTH=true
-export PODLY_ADMIN_USERNAME='podly_admin'
-export PODLY_ADMIN_PASSWORD='SuperSecurePass!2024'
-export PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
+REQUIRE_AUTH=true
+PODLY_ADMIN_USERNAME='podly_admin'
+PODLY_ADMIN_PASSWORD='SuperSecurePass!2024'
+PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
 ```
 
 2. Start Podly as usual. On first boot with auth enabled and an empty database, the admin account is created automatically. If you are turning auth on for an existing volume, clear the `sqlite3.db` file so the bootstrap can succeed.
