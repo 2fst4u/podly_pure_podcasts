@@ -5,6 +5,7 @@ from podcast_processor.audio import (
     clip_segments_with_fade,
     get_audio_duration_ms,
     split_audio,
+    trim_file,
 )
 
 TEST_FILE_DURATION = 66_048
@@ -94,6 +95,42 @@ def test_clip_segment_with_fade_end() -> None:
             f"Duration mismatch: expected {expected_duration}ms, got {actual_duration}ms, "
             f"difference: {abs(actual_duration - expected_duration)}ms"
         )
+
+
+def test_trim_file() -> None:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        output_path = temp_dir_path / "trimmed.mp3"
+        start_ms = 1_000
+        end_ms = 4_000
+
+        trim_file(Path(TEST_FILE_PATH), output_path, start_ms, end_ms)
+
+        assert output_path.exists(), "Trimmed file was not created"
+        assert output_path.stat().st_size > 0, "Trimmed file is empty"
+
+        actual_duration = get_audio_duration_ms(str(output_path))
+        assert actual_duration is not None, "Failed to get audio duration"
+
+        expected_duration = end_ms - start_ms
+        assert abs(actual_duration - expected_duration) <= 100, (
+            f"Duration mismatch: expected {expected_duration}ms, got {actual_duration}ms, "
+            f"difference: {abs(actual_duration - expected_duration)}ms"
+        )
+
+
+def test_trim_file_zero_duration() -> None:
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        output_path = temp_dir_path / "trimmed.mp3"
+        start_ms = 1_000
+        end_ms = 1_000
+
+        trim_file(Path(TEST_FILE_PATH), output_path, start_ms, end_ms)
+
+        assert (
+            not output_path.exists()
+        ), "Trimmed file was incorrectly created for duration <= 0"
 
 
 def test_split_audio() -> None:
