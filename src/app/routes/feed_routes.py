@@ -372,10 +372,7 @@ def get_feed(f_id: int) -> Response:
 
     feed = Feed.query.get_or_404(f_id)
 
-    # Refresh the feed
-    refresh_feed(feed)
-
-    # Generate the XML
+    # Generate the XML (feed refresh happens in background, not on every request)
     xml_content = generate_feed_xml(feed)
 
     response = make_response(xml_content)
