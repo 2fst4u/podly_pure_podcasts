@@ -91,7 +91,7 @@ def _get_base_url() -> str:
             """Normalise a header value to 'http' or 'https', or return None."""
             if value is None:
                 return None
-            first = str(value).split(",")[0].strip().strip('"').lower()
+            first = str(value).split(",", maxsplit=1)[0].strip().strip('"').lower()
             return first if first in {"http", "https"} else None
 
         # Check various ways HTTP/2 pseudo-headers might be available
