@@ -86,6 +86,7 @@ def _should_auto_whitelist_new_posts(feed: Feed, post: Optional[Post] = None) ->
 
 def _get_base_url() -> str:
     try:
+
         def _normalize_proto(value: Any) -> Optional[str]:
             """Normalise a header value to 'http' or 'https', or return None."""
             if value is None:
