@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import uuid
 from types import SimpleNamespace
@@ -10,6 +11,7 @@ import pytest
 
 from app.feeds import (
     _get_base_url,
+    _normalize_proto,
     _should_auto_whitelist_new_posts,
     add_feed,
     db,
@@ -961,12 +963,10 @@ def test_get_base_url_rfc7239_forwarded_header():
 
 def test_get_base_url_cloudflare_cf_visitor():
     """Cloudflare CF-Visitor JSON header should be detected as HTTPS."""
-    import json as _json
-
     mock_request = _make_mock_request(
         {
             "Host": "podly.example.com",
-            "CF-Visitor": _json.dumps({"scheme": "https"}),
+            "CF-Visitor": json.dumps({"scheme": "https"}),
         }
     )
     with mock.patch("app.feeds.request", mock_request):
@@ -1002,3 +1002,38 @@ def test_get_base_url_comma_separated_forwarded_proto():
     with mock.patch("app.feeds.request", mock_request):
         result = _get_base_url()
     assert result == "https://podly.example.com"
+
+
+# ---- _normalize_proto unit tests ---------------------------------------------------
+
+
+def test_normalize_proto_returns_https():
+    assert _normalize_proto("https") == "https"
+
+
+def test_normalize_proto_returns_http():
+    assert _normalize_proto("http") == "http"
+
+
+def test_normalize_proto_strips_quotes():
+    assert _normalize_proto('"https"') == "https"
+
+
+def test_normalize_proto_case_insensitive():
+    assert _normalize_proto("HTTPS") == "https"
+    assert _normalize_proto("HTTP") == "http"
+
+
+def test_normalize_proto_comma_list_takes_first():
+    assert _normalize_proto("https, http") == "https"
+    assert _normalize_proto("http, https") == "http"
+
+
+def test_normalize_proto_none_returns_none():
+    assert _normalize_proto(None) is None
+
+
+def test_normalize_proto_invalid_returns_none():
+    assert _normalize_proto("ftp") is None
+    assert _normalize_proto("") is None
+    assert _normalize_proto("  ") is None

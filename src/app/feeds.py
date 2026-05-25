@@ -23,6 +23,17 @@ logger = logging.getLogger("global_logger")
 _FORWARDED_PROTO_RE = re.compile(r'(?:^|[;,])\s*proto=("?)(https?)\1', re.IGNORECASE)
 
 
+def _normalize_proto(value: Any) -> Optional[str]:
+    """Normalise a reverse-proxy header value to 'http' or 'https', or return None.
+
+    Handles comma-separated lists (takes the first value) and quoted strings.
+    """
+    if value is None:
+        return None
+    first = str(value).split(",", maxsplit=1)[0].strip().strip('"').lower()
+    return first if first in {"http", "https"} else None
+
+
 def is_feed_active_for_user(feed_id: int, user: User) -> bool:
     """Check if the feed is within the user's allowance based on subscription date."""
     if user.role == "admin":
@@ -86,14 +97,6 @@ def _should_auto_whitelist_new_posts(feed: Feed, post: Optional[Post] = None) ->
 
 def _get_base_url() -> str:
     try:
-
-        def _normalize_proto(value: Any) -> Optional[str]:
-            """Normalise a header value to 'http' or 'https', or return None."""
-            if value is None:
-                return None
-            first = str(value).split(",", maxsplit=1)[0].strip().strip('"').lower()
-            return first if first in {"http", "https"} else None
-
         # Check various ways HTTP/2 pseudo-headers might be available
         http2_scheme = (
             request.headers.get(":scheme")
@@ -143,8 +146,8 @@ def _get_base_url() -> str:
                     except Exception:  # pylint: disable=broad-except
                         forwarded_proto = None
 
-            # Check multiple indicators for HTTPS
-            is_https = forwarded_proto == "https" or (
+            # Check secondary indicators for HTTPS when no forwarded-proto header was found
+            is_https = (
                 request.is_secure
                 or request.headers.get("Strict-Transport-Security") is not None
                 or request.headers.get("X-Forwarded-Ssl") == "on"
@@ -153,6 +156,7 @@ def _get_base_url() -> str:
                 or request.environ.get("HTTPS") == "on"
                 or request.scheme == "https"
             )
+            # forwarded_proto (explicit proxy header) takes precedence over is_https
             scheme = forwarded_proto or ("https" if is_https else "http")
             return f"{scheme}://{host}"
     except RuntimeError:
