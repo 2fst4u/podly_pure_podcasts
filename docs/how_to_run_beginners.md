@@ -40,18 +40,21 @@ docker compose up -d         # detached
 
 ### Optional: Enable Authentication
 
-The Docker image reads environment variables from `.env` files. To require login:
+To require login, pass the required environment variables directly to the `docker run` or `docker compose` command:
 
-1. Add the following variables to `.env.local`:
+1. Use `-e` flags to set the authentication variables:
 
 ```bash
-REQUIRE_AUTH=true
-PODLY_ADMIN_USERNAME='podly_admin'
-PODLY_ADMIN_PASSWORD='SuperSecurePass!2024'
-PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret'
+docker run -d \
+  -p 5001:5001 \
+  -e REQUIRE_AUTH=true \
+  -e PODLY_ADMIN_USERNAME='podly_admin' \
+  -e PODLY_ADMIN_PASSWORD='SuperSecurePass!2024' \
+  -e PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret' \
+  ghcr.io/podly-pure-podcasts/podly-pure-podcasts:main-latest
 ```
 
-2. Start Podly as usual. On first boot with auth enabled and an empty database, the admin account is created automatically. If you are turning auth on for an existing volume, clear the `sqlite3.db` file so the bootstrap can succeed.
+2. On first boot with auth enabled and an empty database, the admin account is created automatically. If you are turning auth on for an existing volume, clear the `sqlite3.db` file so the bootstrap can succeed.
 
 3. Sign in at `http://localhost:5001`, then visit the Config page to change your password, add users, and copy RSS URLs with the "Copy protected feed" button. Podly generates feed-specific access tokens and embeds them in the link so podcast players can subscribe without exposing your main password. Remember to update your environment variables whenever you rotate the admin password.
 
