@@ -2,10 +2,10 @@
 
 ### Quick Start (Docker - recommended for local setup)
 
-1. Build and run the containers:
+1. Run the containers:
 
 ```bash
-docker compose build
+cp .env.local.example .env.local
 docker compose up       # foreground with logs
 docker compose up -d    # or detached
 ```
