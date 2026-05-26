@@ -166,3 +166,42 @@ def test_split_audio() -> None:
             assert (
                 abs(filesize - split.stat().st_size) <= 500
             ), f"filesize <> 500 bytes for {split}. found {split.stat().st_size}, expected {filesize}"  # pylint: disable=line-too-long
+
+
+def test_clip_segments_simple() -> None:
+    from podcast_processor.audio import _clip_segments_simple
+
+    ad_start_offset_ms, ad_end_offset_ms = 3_000, 21_000
+
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+        _clip_segments_simple(
+            [(ad_start_offset_ms, ad_end_offset_ms)],
+            TEST_FILE_PATH,
+            temp_file.name,
+            TEST_FILE_DURATION,
+        )
+
+        expected_duration = TEST_FILE_DURATION - (ad_end_offset_ms - ad_start_offset_ms)
+        actual_duration = get_audio_duration_ms(temp_file.name)
+        assert actual_duration is not None, "Failed to get audio duration"
+        assert abs(actual_duration - expected_duration) <= 100, (
+            f"Duration mismatch: expected {expected_duration}ms, got {actual_duration}ms, "
+            f"difference: {abs(actual_duration - expected_duration)}ms"
+        )
+
+
+def test_clip_segments_simple_no_segments() -> None:
+    import pytest
+
+    from podcast_processor.audio import _clip_segments_simple
+
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+        with pytest.raises(
+            ValueError, match="No audio segments to keep after ad removal"
+        ):
+            _clip_segments_simple(
+                [(0, TEST_FILE_DURATION)],
+                TEST_FILE_PATH,
+                temp_file.name,
+                TEST_FILE_DURATION,
+            )
