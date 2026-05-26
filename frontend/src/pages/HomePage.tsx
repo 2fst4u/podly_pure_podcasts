@@ -120,6 +120,7 @@ export default function HomePage() {
                 onClick={() => refreshAllMutation.mutate()}
                 disabled={refreshAllMutation.isPending}
                 title="Refresh all feeds"
+                aria-label="Refresh all feeds"
                 className={`flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                   refreshAllMutation.isPending
                     ? 'border-gray-200 text-gray-400 cursor-not-allowed'
@@ -129,6 +130,7 @@ export default function HomePage() {
                 <img
                   src="/reload-icon.svg"
                   alt="Refresh all"
+                  aria-hidden="true"
                   className={`w-4 h-4 ${refreshAllMutation.isPending ? 'animate-spin' : ''}`}
                 />
               </button>
