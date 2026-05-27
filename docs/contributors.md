@@ -147,7 +147,6 @@ Podly can be run in Docker. By default, `compose.yml` pulls pre-built images fro
 ```bash
 docker compose up            # start in the foreground
 docker compose up -d         # start in detached mode
-docker compose build         # build locally (requires a build-enabled compose override)
 docker compose down          # stop and remove containers
 ```
 
