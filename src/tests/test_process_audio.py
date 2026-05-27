@@ -205,3 +205,44 @@ def test_clip_segments_simple_no_segments() -> None:
                 temp_file.name,
                 TEST_FILE_DURATION,
             )
+
+
+def test_clip_segments_complex_no_ad_segments() -> None:
+    from podcast_processor.audio import _clip_segments_complex
+
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+        _clip_segments_complex(
+            [],
+            5000,
+            TEST_FILE_PATH,
+            temp_file.name,
+            TEST_FILE_DURATION,
+        )
+
+        expected_duration = TEST_FILE_DURATION
+        actual_duration = get_audio_duration_ms(temp_file.name)
+        assert actual_duration is not None, "Failed to get audio duration"
+        assert abs(actual_duration - expected_duration) <= 100, (
+            f"Duration mismatch: expected {expected_duration}ms, got {actual_duration}ms, "
+            f"difference: {abs(actual_duration - expected_duration)}ms"
+        )
+
+
+def test_clip_segments_with_fade_no_segments() -> None:
+    fade_len_ms = 5_000
+
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+        clip_segments_with_fade(
+            [],
+            fade_len_ms,
+            TEST_FILE_PATH,
+            temp_file.name,
+        )
+
+        expected_duration = TEST_FILE_DURATION
+        actual_duration = get_audio_duration_ms(temp_file.name)
+        assert actual_duration is not None, "Failed to get audio duration"
+        assert abs(actual_duration - expected_duration) <= 100, (
+            f"Duration mismatch: expected {expected_duration}ms, got {actual_duration}ms, "
+            f"difference: {abs(actual_duration - expected_duration)}ms"
+        )
