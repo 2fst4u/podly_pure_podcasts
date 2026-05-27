@@ -29,6 +29,28 @@ interface ProcessingEstimate {
 
 const EPISODES_PAGE_SIZE = 25;
 
+// ⚡ Bolt: Moved pure formatting functions outside the component
+// Why: Prevents re-creating the function references on every re-render.
+// Impact: FeedDetail re-renders frequently when interacting with pagination, sorting, or episode lists. This saves repeated memory allocation and garbage collection overhead.
+const formatDate = (dateString: string | null) => {
+  if (!dateString) return 'Unknown date';
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+const formatDuration = (seconds: number | null) => {
+  if (!seconds) return '';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}m`;
+};
+
 export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailProps) {
   const { requireAuth, isAuthenticated, user } = useAuth();
   const [sortBy, setSortBy] = useState<SortOption>('newest');
@@ -406,25 +428,6 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
   // Calculate whitelist status for bulk button
   const allWhitelisted = totalCount > 0 && whitelistedCount === totalCount;
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Unknown date';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const formatDuration = (seconds: number | null) => {
-    if (!seconds) return '';
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
-  };
 
   const handleCopyRssToClipboard = async () => {
     if (requireAuth && !isAuthenticated) {
