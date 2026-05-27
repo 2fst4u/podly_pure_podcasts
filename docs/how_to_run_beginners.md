@@ -60,7 +60,7 @@ docker run -d \
 
 ### First Run
 
-1. Docker will download and build the necessary image (this may take 5-15 minutes)
+1. Docker will download the necessary image (this may take a few minutes)
 2. Look for "Running on http://0.0.0.0:5001"
 3. Open your browser to `http://localhost:5001`
 4. Configure settings at `http://localhost:5001/config`
