@@ -73,9 +73,10 @@ export default function FeedList({ feeds, onFeedSelected, selectedFeedId }: Feed
           </div>
         ) : (
           filteredFeeds.map((feed) => (
-            <div 
-              key={feed.id} 
-              className={`bg-white rounded-lg shadow border cursor-pointer transition-all hover:shadow-md group ${
+            <button
+              key={feed.id}
+              type="button"
+              className={`w-full text-left bg-white rounded-lg shadow border cursor-pointer transition-all hover:shadow-md group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 selectedFeedId === feed.id ? 'ring-2 ring-blue-500 border-blue-200' : ''
               }`}
               onClick={() => onFeedSelected(feed)}
@@ -130,7 +131,7 @@ export default function FeedList({ feeds, onFeedSelected, selectedFeedId }: Feed
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           ))
         )}
       </div>
