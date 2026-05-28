@@ -40,18 +40,16 @@ docker compose up -d         # detached
 
 ### Optional: Enable Authentication
 
-To require login, pass the required environment variables directly to the `docker run` or `docker compose` command:
+To require login, set the required environment variables in your `.env.local` file before starting the application with `docker compose up`:
 
-1. Use `-e` flags to set the authentication variables:
+1. Uncomment and edit the authentication variables at the bottom of `.env.local`:
 
 ```bash
-docker run -d \
-  -p 5001:5001 \
-  -e REQUIRE_AUTH=true \
-  -e PODLY_ADMIN_USERNAME='podly_admin' \
-  -e PODLY_ADMIN_PASSWORD='SuperSecurePass!2024' \
-  -e PODLY_SECRET_KEY='replace-with-a-strong-64-char-secret' \
-  ghcr.io/podly-pure-podcasts/podly-pure-podcasts:main-latest
+# Set REQUIRE_AUTH=true to enable login for the web UI, feeds, and downloads
+REQUIRE_AUTH=true
+PODLY_ADMIN_USERNAME=podly_admin
+PODLY_ADMIN_PASSWORD=SuperSecurePass!2024
+PODLY_SECRET_KEY=replace-with-a-strong-64-char-secret
 ```
 
 2. On first boot with auth enabled and an empty database, the admin account is created automatically. If you are turning auth on for an existing volume, clear the `sqlite3.db` file so the bootstrap can succeed.
