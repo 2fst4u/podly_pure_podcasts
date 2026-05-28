@@ -2,6 +2,25 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { feedsApi } from '../services/api';
 
+// ⚡ Bolt: Moved pure formatting functions outside the component
+// Why: Prevents re-creating the function references on every re-render.
+// Impact: ProcessingStatsButton re-renders frequently when interacting with its modal state or expanding model calls. This saves repeated memory allocation and garbage collection overhead.
+const formatDuration = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.round(seconds % 60); // Round to nearest whole second
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${secs}s`;
+  }
+  return `${minutes}m ${secs}s`;
+};
+
+const formatTimestamp = (timestamp: string | null) => {
+  if (!timestamp) return 'N/A';
+  return new Date(timestamp).toLocaleString();
+};
+
 interface ProcessingStatsButtonProps {
   episodeGuid: string;
   hasProcessedAudio: boolean;
@@ -22,22 +41,6 @@ export default function ProcessingStatsButton({
     queryFn: () => feedsApi.getPostStats(episodeGuid),
     enabled: showModal && hasProcessedAudio, // Only fetch when modal is open and episode is processed
   });
-
-  const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.round(seconds % 60); // Round to nearest whole second
-
-    if (hours > 0) {
-      return `${hours}h ${minutes}m ${secs}s`;
-    }
-    return `${minutes}m ${secs}s`;
-  };
-
-  const formatTimestamp = (timestamp: string | null) => {
-    if (!timestamp) return 'N/A';
-    return new Date(timestamp).toLocaleString();
-  };
 
   const toggleModelCallDetails = (callId: number) => {
     const newExpanded = new Set(expandedModelCalls);
