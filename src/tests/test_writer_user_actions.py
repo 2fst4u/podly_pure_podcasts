@@ -17,8 +17,10 @@ from app.writer.actions.users import (
     set_manual_feed_allowance_action,
     set_user_role_action,
     update_user_password_action,
+    update_user_settings_action,
     upsert_discord_user_action,
 )
+from app.writer.executor import CommandExecutor
 
 
 class TestCreateUser:
@@ -166,3 +168,33 @@ class TestUpsertDiscordUser:
                 {"discord_id": "555", "discord_username": "Taken"}
             )
             assert db.session.get(User, result["user_id"]).username == "taken_1"
+
+
+class TestUpdateUserSettings:
+    def test_toggles_dark_mode(self, app: Flask) -> None:
+        with app.app_context():
+            uid = create_user_action({"username": "u", "password": "pw"})["user_id"]
+
+            result = update_user_settings_action({"user_id": uid, "dark_mode": True})
+            assert result["dark_mode"] is True
+            assert db.session.get(User, uid).dark_mode is True
+
+            result = update_user_settings_action({"user_id": uid, "dark_mode": False})
+            assert result["dark_mode"] is False
+            assert db.session.get(User, uid).dark_mode is False
+
+    def test_missing_user_raises(self, app: Flask) -> None:
+        with app.app_context():
+            with pytest.raises(ValueError, match="not found"):
+                update_user_settings_action({"user_id": 9999, "dark_mode": True})
+
+    def test_missing_user_id_raises(self, app: Flask) -> None:
+        with app.app_context():
+            with pytest.raises(ValueError, match="user_id is required"):
+                update_user_settings_action({"dark_mode": True})
+
+    def test_action_is_registered_with_executor(self, app: Flask) -> None:
+        # The route dispatches "update_user_settings" via the writer; the action
+        # must be registered or the dark mode toggle silently fails at runtime.
+        executor = CommandExecutor(app)
+        assert "update_user_settings" in executor.actions

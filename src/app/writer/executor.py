@@ -137,6 +137,9 @@ class CommandExecutor:
         self.register_action(
             "update_user_last_active", writer_actions.update_user_last_active_action
         )
+        self.register_action(
+            "update_user_settings", writer_actions.update_user_settings_action
+        )
 
     def _discover_models(self) -> Dict[str, Any]:
         """Discover all SQLAlchemy models in app.models"""
