@@ -196,3 +196,19 @@ def update_user_last_active_action(params: Dict[str, Any]) -> Dict[str, Any]:
     user.last_active = datetime.utcnow()
     db.session.flush()
     return {"user_id": user.id, "last_active": user.last_active.isoformat()}
+
+
+def update_user_settings_action(params: Dict[str, Any]) -> Dict[str, Any]:
+    user_id = params.get("user_id")
+    if not user_id:
+        raise ValueError("user_id is required")
+
+    user = db.session.get(User, int(user_id))
+    if not user:
+        raise ValueError(f"User {user_id} not found")
+
+    if "dark_mode" in params:
+        user.dark_mode = bool(params.get("dark_mode"))
+
+    db.session.flush()
+    return {"user_id": user.id, "dark_mode": user.dark_mode}

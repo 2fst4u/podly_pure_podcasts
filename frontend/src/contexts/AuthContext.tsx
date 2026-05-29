@@ -15,6 +15,7 @@ interface AuthContextValue {
   logout: () => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   refreshUser: () => Promise<void>;
+  toggleDarkMode: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -33,6 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
     landingPageEnabled: false,
   });
+
+  useEffect(() => {
+    if (state.user?.dark_mode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [state.user?.dark_mode]);
 
   const bootstrapAuth = useCallback(async () => {
     try {
@@ -137,6 +146,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [state.requireAuth]);
 
+  const toggleDarkMode = useCallback(async () => {
+    if (!state.user) return;
+    try {
+      const newDarkMode = !state.user.dark_mode;
+      const response = await authApi.updateSettings({ dark_mode: newDarkMode });
+      setState((prev) => {
+        if (!prev.user) return prev;
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            dark_mode: response.dark_mode,
+          },
+        };
+      });
+    } catch (error) {
+      console.error('Failed to update dark mode setting', error);
+    }
+  }, [state.user]);
+
   const value = useMemo<AuthContextValue>(() => {
     const isAuthenticated = !state.requireAuth || Boolean(state.user);
     return {
@@ -149,8 +178,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       changePassword,
       refreshUser,
+      toggleDarkMode,
     };
-  }, [changePassword, login, logout, refreshUser, state.requireAuth, state.status, state.user]);
+  }, [changePassword, login, logout, refreshUser, state.requireAuth, state.status, state.user, toggleDarkMode]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

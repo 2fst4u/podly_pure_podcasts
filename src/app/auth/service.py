@@ -44,6 +44,7 @@ class AuthenticatedUser:
     id: int
     username: str
     role: str
+    dark_mode: bool
 
 
 def _normalize_username(username: str) -> str:
@@ -56,7 +57,12 @@ def authenticate(username: str, password: str) -> AuthenticatedUser | None:
         return None
     if not user.verify_password(password):
         return None
-    return AuthenticatedUser(id=user.id, username=user.username, role=user.role)
+    return AuthenticatedUser(
+        id=user.id,
+        username=user.username,
+        role=user.role,
+        dark_mode=user.dark_mode,
+    )
 
 
 def list_users() -> Sequence[User]:
