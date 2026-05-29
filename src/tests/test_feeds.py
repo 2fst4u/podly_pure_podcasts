@@ -804,6 +804,63 @@ def test_get_duration_with_invalid_duration():
     assert result is None
 
 
+def test_get_duration_formats():
+    """Test get_duration with various formats."""
+    assert get_duration({"itunes_duration": "3600"}) == 3600
+    assert get_duration({"itunes_duration": "01:00:00"}) == 3600
+    assert get_duration({"itunes_duration": "60:00"}) == 3600
+    assert get_duration({"itunes_duration": "01:02:03"}) == 3723
+    assert get_duration({"itunes_duration": "05:10"}) == 310
+    assert get_duration({"itunes_duration": 3600}) == 3600
+    assert get_duration({"itunes_duration": ""}) is None
+    assert get_duration({"itunes_duration": "invalid"}) is None
+
+
+def test_itunes_rss_item_duration():
+    """Test that ItunesRSSItem includes itunes:duration in XML."""
+    import xml.sax.saxutils
+
+    from app.feeds import ItunesRSSItem
+
+    class MockHandler:
+        def __init__(self):
+            self.elements = []
+
+        def startElement(self, name, attrs):
+            self.elements.append(("start", name, attrs))
+
+        def endElement(self, name):
+            self.elements.append(("end", name))
+
+        def characters(self, content):
+            self.elements.append(("chars", content))
+
+    item = ItunesRSSItem(
+        title="Test",
+        enclosure=mock.MagicMock(),
+        description="Desc",
+        guid="guid",
+        pubDate=None,
+        duration=3600,
+    )
+
+    handler = MockHandler()
+    item.publish_extensions(handler)
+
+    # Check if itunes:duration was called
+    duration_calls = [e for e in handler.elements if "itunes:duration" in str(e)]
+    assert len(duration_calls) >= 2  # start and end
+
+    # Check value
+    char_calls = [
+        handler.elements[i]
+        for i, e in enumerate(handler.elements)
+        if e[0] == "chars" and handler.elements[i - 1][1] == "itunes:duration"
+    ]
+    assert len(char_calls) == 1
+    assert char_calls[0][1] == "3600"
+
+
 def test_get_duration_with_missing_duration():
     """Test get_duration with a missing duration."""
     entry = {}
