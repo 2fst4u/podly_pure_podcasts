@@ -14,6 +14,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'images/logos/*.png', 'images/logos/*.svg'],
+      manifestFilename: 'manifest.json',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
         navigateFallback: 'index.html',
@@ -32,6 +33,12 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         icons: [
+          {
+            src: 'images/logos/apple-icon-180.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any'
+          },
           {
             src: 'images/logos/manifest-icon-192.maskable.png',
             sizes: '192x192',

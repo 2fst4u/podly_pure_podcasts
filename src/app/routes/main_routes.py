@@ -40,16 +40,17 @@ def serve_sw() -> flask.Response:
     flask.abort(404)
 
 
+@main_bp.route("/manifest.json")
 @main_bp.route("/manifest.webmanifest")
 def serve_manifest() -> flask.Response:
     """Serve the web manifest with correct MIME type."""
     static_folder = flask.current_app.static_folder
-    if static_folder and os.path.exists(
-        os.path.join(static_folder, "manifest.webmanifest")
-    ):
-        return flask.send_from_directory(
-            static_folder, "manifest.webmanifest", mimetype="application/manifest+json"
-        )
+    # Try manifest.json first as it's our new default
+    for filename in ["manifest.json", "manifest.webmanifest"]:
+        if static_folder and os.path.exists(os.path.join(static_folder, filename)):
+            return flask.send_from_directory(
+                static_folder, filename, mimetype="application/manifest+json"
+            )
     flask.abort(404)
 
 
