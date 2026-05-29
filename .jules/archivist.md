@@ -10,3 +10,7 @@
 
 **Learning:** The beginner setup documentation provided instructions for enabling authentication using a `docker run -e` command, but the main recommended path uses `docker compose up` heavily relying on `.env.local` mappings. This creates a confusing experience where users are simultaneously instructed to use a `docker run` one-off command while also learning to manage their config inside `.env.local`.
 **Action:** When updating instructions related to Docker container configuration or environment variables, always prefer configuring `.env.local` to align with the primary `compose.yml` workflow, and avoid providing raw `docker run` commands unless absolutely necessary.
+## 2026-05-29 - Frontend Build Instructions Drift
+
+**Learning:** The contributor documentation instructed users to "Restart the container after frontend changes to rebuild assets," but the local Docker setup (`compose.yml`) uses pre-built images and does not mount the `frontend/` directory. Therefore, restarting the container does not rebuild frontend assets for local development.
+**Action:** Always ensure frontend development instructions reflect the actual setup (e.g., using `pnpm dev` inside the `frontend/` directory) rather than assuming a volume-mounted containerized build process.
