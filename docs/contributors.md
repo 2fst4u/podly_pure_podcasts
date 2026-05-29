@@ -86,32 +86,6 @@ Podly ships with built-in authentication so you can secure feeds without relying
 - After signing in, open the Config page to rotate your password and manage additional users. When you change the admin password, update the corresponding environment variable in your deployment platform so restarts continue to succeed.
 - Use the "Copy protected feed" button to generate feed-specific access tokens that are embedded in subscription URLs so podcast clients can authenticate without your primary password. Rate limiting is still applied to repeated authentication failures.
 
-## Ubuntu Service
-
-Add a service file to /etc/systemd/system/podly.service
-
-```
-[Unit]
-Description=Podly Podcast Service
-After=network.target
-
-[Service]
-User=yourusername
-Group=yourusername
-WorkingDirectory=/path/to/your/app
-ExecStart=/usr/bin/pipenv run python src/main.py
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-enable the service
-
-```
-sudo systemctl daemon-reload
-sudo systemctl enable podly.service
-```
 
 ## Database Update
 
@@ -130,31 +104,10 @@ On next launch, the database updates automatically.
 This repo uses `semantic-release` to automate versioning and GitHub releases. It relies on
 Conventional Commits to determine the next version.
 
-For pull requests, include **at least one** commit that follows the Conventional Commit format:
-
-- `feat: add new episode filter`
-- `fix(api): handle empty feed`
-- `chore: update dependencies`
-
-If no Conventional Commit is present, the release pipeline will have nothing to publish.
-
 ## Docker Support
 
 Podly can be run in Docker. By default, `compose.yml` pulls pre-built images from GitHub Container Registry.
 
-### Common Commands
-
-```bash
-docker compose up            # start in the foreground
-docker compose up -d         # start in detached mode
-docker compose down          # stop and remove containers
-```
-
-To target a specific image tag, set the `BRANCH` env var before running, for example:
-
-```bash
-BRANCH=main-latest docker compose up -d
-```
 
 ### Docker Environment Configuration
 
@@ -163,68 +116,9 @@ BRANCH=main-latest docker compose up -d
 - `PUID`/`PGID`: User/group IDs for file permissions
 - `CORS_ORIGINS`: Backend CORS configuration (defaults to accept requests from any origin)
 
-## FAQ
-
-Q: What does "whitelisted" mean in the UI?
-
-A: It means an episode is eligible for download and ad removal. By default, new episodes are automatically whitelisted (`automatically_whitelist_new_episodes`), and only a limited number of old episodes are auto-whitelisted (`number_of_episodes_to_whitelist_from_archive_of_new_feed`). Adjust these settings in the Config page (/config).
-
-## Contributing
-
-We welcome contributions to Podly! Here's how you can help:
-
-### Development Setup
-
-1. Fork the repository
-2. Clone your fork:
-   ```bash
-   git clone https://github.com/yourusername/podly.git
-   ```
-3. Create a new branch for your feature:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-4. Create a pull request with a target branch of Preview
-
 #### Application Ports
 
 - **Application**: Runs on port 5001 (configurable via web UI at `/config`)
   - Serves both the web interface and API endpoints
   - In production, the frontend is built as static assets and served by the backend
 - For local frontend development, the Docker setup does not mount the frontend files. Instead, run `pnpm dev` in the `frontend/` directory (after running `pnpm install`) to start the Vite development server on port 5173, which proxies requests to the backend container.
-
-### Running Tests
-
-Before submitting a pull request, you can run the same tests that run in CI:
-
-To prep your pipenv environment to run this script, you will need to first run:
-
-```bash
-pipenv install --dev
-```
-
-Then, to run the checks,
-
-```bash
-scripts/ci.sh
-```
-
-This will run all the necessary checks including:
-
-- Type checking with mypy
-- Code formatting checks
-- Unit tests
-- Linting
-
-### Pull Request Process
-
-1. Ensure all tests pass locally
-2. Update the documentation if needed
-3. Create a Pull Request with a clear description of the changes
-4. Link any related issues
-
-### Code Style
-
-- We use black for code formatting
-- Type hints are required for all new code
-- Follow existing patterns in the codebase
