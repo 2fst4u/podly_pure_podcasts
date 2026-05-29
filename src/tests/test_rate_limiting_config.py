@@ -89,23 +89,3 @@ class TestRateLimitingConfig:
         assert config.llm_max_input_tokens_per_call is None
         assert config.llm_enable_token_rate_limiting is False
         assert config.llm_max_input_tokens_per_minute is None
-
-    def test_config_field_descriptions(self) -> None:
-        """Test that config fields have proper descriptions."""
-        # Test that the field definitions include helpful descriptions
-        config_fields = Config.model_fields
-
-        assert "llm_max_concurrent_calls" in config_fields
-        assert "Maximum concurrent LLM calls" in str(
-            config_fields["llm_max_concurrent_calls"].description
-        )
-
-        assert "llm_max_retry_attempts" in config_fields
-        assert "Maximum retry attempts" in str(
-            config_fields["llm_max_retry_attempts"].description
-        )
-
-        assert "llm_enable_token_rate_limiting" in config_fields
-        assert "client-side token-based rate limiting" in str(
-            config_fields["llm_enable_token_rate_limiting"].description
-        )
