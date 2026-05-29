@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'images/logos/*.png', 'images/logos/*.svg'],
+      includeAssets: ['favicon.ico', 'images/logos/*.png', 'images/logos/*.svg'],
       manifest: {
         name: 'Podly',
         short_name: 'Podly',
