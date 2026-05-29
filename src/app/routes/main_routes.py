@@ -18,6 +18,17 @@ logger = logging.getLogger("global_logger")
 main_bp = Blueprint("main", __name__)
 
 
+@main_bp.route("/registerSW.js")
+def serve_register_sw() -> flask.Response:
+    """Serve the SW registration script with correct MIME type."""
+    static_folder = flask.current_app.static_folder
+    if static_folder and os.path.exists(os.path.join(static_folder, "registerSW.js")):
+        return flask.send_from_directory(
+            static_folder, "registerSW.js", mimetype="application/javascript"
+        )
+    flask.abort(404)
+
+
 @main_bp.route("/sw.js")
 def serve_sw() -> flask.Response:
     """Serve the service worker with correct MIME type."""
