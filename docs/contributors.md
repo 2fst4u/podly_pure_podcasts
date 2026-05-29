@@ -190,8 +190,8 @@ We welcome contributions to Podly! Here's how you can help:
 
 - **Application**: Runs on port 5001 (configurable via web UI at `/config`)
   - Serves both the web interface and API endpoints
-  - Frontend is built as static assets and served by the backend
-- Restart the container after frontend changes to rebuild assets
+  - In production, the frontend is built as static assets and served by the backend
+- For local frontend development, the Docker setup does not mount the frontend files. Instead, run `pnpm dev` in the `frontend/` directory (after running `pnpm install`) to start the Vite development server on port 5173, which proxies requests to the backend container.
 
 ### Running Tests
 
