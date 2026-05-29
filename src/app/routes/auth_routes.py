@@ -26,6 +26,7 @@ from app.auth.state import failure_rate_limiter
 from app.extensions import db
 from app.models import User
 from app.runtime_config import config as runtime_config
+from app.writer.client import writer_client
 
 logger = logging.getLogger("global_logger")
 
@@ -338,8 +339,11 @@ def update_settings_route() -> RouteResult:
         params["dark_mode"] = payload["dark_mode"]
 
     result = writer_client.action("update_user_settings", params, wait=True)
-    if not result or not result.success:
-        return jsonify({"error": getattr(result, "error", "Failed to update settings")}), 500
+    if not result or not result.success or not isinstance(result.data, dict):
+        return (
+            jsonify({"error": getattr(result, "error", "Failed to update settings")}),
+            500,
+        )
 
     return jsonify({"status": "ok", "dark_mode": result.data.get("dark_mode")})
 
