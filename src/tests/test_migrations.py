@@ -22,9 +22,25 @@ from flask_migrate import Migrate, upgrade
 
 from app.extensions import db
 
-# Import every model so its table is registered in db.metadata before comparison.
-import app.models  # noqa: F401
-
+# Import all models so their tables are registered in db.metadata before comparison.
+from app.models import (  # noqa: F401
+    AppSettings,
+    DiscordSettings,
+    Feed,
+    FeedAccessToken,
+    Identification,
+    JobsManagerRun,
+    LLMSettings,
+    ModelCall,
+    OutputSettings,
+    Post,
+    ProcessingJob,
+    ProcessingSettings,
+    TranscriptSegment,
+    User,
+    UserFeed,
+    WhisperSettings,
+)
 
 MIGRATIONS_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "migrations")
