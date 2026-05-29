@@ -97,6 +97,42 @@ def test_login_sets_session_cookie_and_allows_authenticated_requests(
     assert protected.get_json()["status"] == "ok"
 
 
+def test_login_with_wrong_password_returns_401(auth_app: Flask) -> None:
+    client = auth_app.test_client()
+    response = client.post(
+        "/api/auth/login",
+        json={"username": "admin", "password": "not-the-password"},
+    )
+    assert response.status_code == 401
+    assert response.get_json()["error"] == "Invalid username or password."
+    # No session should be established.
+    assert client.get("/api/protected").status_code == 401
+
+
+def test_login_missing_credentials_returns_400(auth_app: Flask) -> None:
+    client = auth_app.test_client()
+    response = client.post("/api/auth/login", json={"username": "admin"})
+    assert response.status_code == 400
+
+
+def test_repeated_failures_trigger_lockout(auth_app: Flask) -> None:
+    client = auth_app.test_client()
+
+    saw_lockout = False
+    for _ in range(10):
+        response = client.post(
+            "/api/auth/login",
+            json={"username": "admin", "password": "wrong"},
+        )
+        if response.status_code == 429:
+            saw_lockout = True
+            assert response.headers.get("Retry-After") is not None
+            break
+        assert response.status_code == 401
+
+    assert saw_lockout, "expected the brute-force throttle to eventually return 429"
+
+
 def test_logout_clears_session(auth_app: Flask) -> None:
     client = auth_app.test_client()
     client.post("/api/auth/login", json={"username": "admin", "password": "password"})
