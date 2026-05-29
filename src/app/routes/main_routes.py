@@ -18,6 +18,42 @@ logger = logging.getLogger("global_logger")
 main_bp = Blueprint("main", __name__)
 
 
+@main_bp.route("/registerSW.js")
+def serve_register_sw() -> flask.Response:
+    """Serve the SW registration script with correct MIME type."""
+    static_folder = flask.current_app.static_folder
+    if static_folder and os.path.exists(os.path.join(static_folder, "registerSW.js")):
+        return flask.send_from_directory(
+            static_folder, "registerSW.js", mimetype="application/javascript"
+        )
+    flask.abort(404)
+
+
+@main_bp.route("/sw.js")
+def serve_sw() -> flask.Response:
+    """Serve the service worker with correct MIME type."""
+    static_folder = flask.current_app.static_folder
+    if static_folder and os.path.exists(os.path.join(static_folder, "sw.js")):
+        return flask.send_from_directory(
+            static_folder, "sw.js", mimetype="application/javascript"
+        )
+    flask.abort(404)
+
+
+@main_bp.route("/manifest.json")
+@main_bp.route("/manifest.webmanifest")
+def serve_manifest() -> flask.Response:
+    """Serve the web manifest with correct MIME type."""
+    static_folder = flask.current_app.static_folder
+    # Try manifest.json first as it's our new default
+    for filename in ["manifest.json", "manifest.webmanifest"]:
+        if static_folder and os.path.exists(os.path.join(static_folder, filename)):
+            return flask.send_from_directory(
+                static_folder, filename, mimetype="application/manifest+json"
+            )
+    flask.abort(404)
+
+
 @main_bp.route("/")
 def index() -> flask.Response:
     """Serve the React app's index.html."""
