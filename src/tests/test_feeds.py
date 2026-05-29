@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import uuid
 from types import SimpleNamespace
@@ -10,6 +11,7 @@ import pytest
 
 from app.feeds import (
     _get_base_url,
+    _normalize_proto,
     _should_auto_whitelist_new_posts,
     add_feed,
     db,
@@ -895,3 +897,143 @@ def test_get_base_url_fallback_http_without_sts():
 
     # Should use HTTP when no HTTPS indicators present
     assert result == "http://insecure.example.com"
+
+
+# ---- PocketCasts / reverse-proxy compatibility tests --------------------------------
+
+
+def _make_mock_request(headers_dict: dict) -> mock.MagicMock:
+    """Helper: build a mock request with the given headers and sane HTTP defaults."""
+    mock_headers = mock.MagicMock()
+    mock_headers.get.side_effect = headers_dict.get
+
+    mock_environ = mock.MagicMock()
+    mock_environ.get.return_value = None
+
+    mock_request = mock.MagicMock()
+    mock_request.headers = mock_headers
+    mock_request.environ = mock_environ
+    mock_request.is_secure = False
+    mock_request.scheme = "http"
+    return mock_request
+
+
+def test_get_base_url_x_forwarded_protocol():
+    """X-Forwarded-Protocol (nginx variant) should be detected as HTTPS."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "X-Forwarded-Protocol": "https"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_x_forwarded_scheme():
+    """X-Forwarded-Scheme (Traefik/Caddy variant) should be detected as HTTPS."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "X-Forwarded-Scheme": "https"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_x_url_scheme():
+    """X-Url-Scheme header should be detected as HTTPS."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "X-Url-Scheme": "https"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_rfc7239_forwarded_header():
+    """RFC 7239 Forwarded header with proto=https should be detected."""
+    mock_request = _make_mock_request(
+        {
+            "Host": "podly.example.com",
+            "Forwarded": "for=192.0.2.1; proto=https; host=podly.example.com",
+        }
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_cloudflare_cf_visitor():
+    """Cloudflare CF-Visitor JSON header should be detected as HTTPS."""
+    mock_request = _make_mock_request(
+        {
+            "Host": "podly.example.com",
+            "CF-Visitor": json.dumps({"scheme": "https"}),
+        }
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_front_end_https():
+    """Front-End-Https: on (IIS / older proxies) should be detected as HTTPS."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "Front-End-Https": "on"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_x_forwarded_port_443():
+    """X-Forwarded-Port: 443 should be treated as an HTTPS indicator."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "X-Forwarded-Port": "443"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+def test_get_base_url_comma_separated_forwarded_proto():
+    """X-Forwarded-Proto with comma-separated list should use the first value."""
+    mock_request = _make_mock_request(
+        {"Host": "podly.example.com", "X-Forwarded-Proto": "https, http"}
+    )
+    with mock.patch("app.feeds.request", mock_request):
+        result = _get_base_url()
+    assert result == "https://podly.example.com"
+
+
+# ---- _normalize_proto unit tests ---------------------------------------------------
+
+
+def test_normalize_proto_returns_https():
+    assert _normalize_proto("https") == "https"
+
+
+def test_normalize_proto_returns_http():
+    assert _normalize_proto("http") == "http"
+
+
+def test_normalize_proto_strips_quotes():
+    assert _normalize_proto('"https"') == "https"
+
+
+def test_normalize_proto_case_insensitive():
+    assert _normalize_proto("HTTPS") == "https"
+    assert _normalize_proto("HTTP") == "http"
+
+
+def test_normalize_proto_comma_list_takes_first():
+    assert _normalize_proto("https, http") == "https"
+    assert _normalize_proto("http, https") == "http"
+
+
+def test_normalize_proto_none_returns_none():
+    assert _normalize_proto(None) is None
+
+
+def test_normalize_proto_invalid_returns_none():
+    assert _normalize_proto("ftp") is None
+    assert _normalize_proto("") is None
+    assert _normalize_proto("  ") is None

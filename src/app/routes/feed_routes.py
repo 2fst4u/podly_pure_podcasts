@@ -6,7 +6,7 @@ from threading import Thread
 from typing import Any, Optional, cast
 
 # pylint: disable=chained-comparison
-from urllib.parse import urlencode, urlparse, urlunparse
+from urllib.parse import urlencode
 
 import requests
 import validators
@@ -30,6 +30,7 @@ from app.auth.guards import require_admin
 from app.auth.service import update_user_last_active
 from app.extensions import db
 from app.feeds import (
+    _get_base_url,
     add_or_refresh_feed,
     generate_aggregate_feed_xml,
     generate_feed_xml,
@@ -263,12 +264,10 @@ def create_feed_share_link(feed_id: int) -> ResponseReturnValue:
     token_id = str(result.data["token_id"])
     secret = str(result.data["secret"])
 
-    parsed = urlparse(request.host_url)
-    netloc = parsed.netloc
-    scheme = parsed.scheme
+    base_url = _get_base_url()
     path = f"/feed/{feed.id}"
     query = urlencode({"feed_token": token_id, "feed_secret": secret})
-    prefilled_url = urlunparse((scheme, netloc, path, "", query, ""))
+    prefilled_url = f"{base_url}{path}?{query}"
 
     return (
         jsonify(
@@ -373,10 +372,7 @@ def get_feed(f_id: int) -> Response:
 
     feed = Feed.query.get_or_404(f_id)
 
-    # Refresh the feed
-    refresh_feed(feed)
-
-    # Generate the XML
+    # Generate the XML (feed refresh happens in background, not on every request)
     xml_content = generate_feed_xml(feed)
 
     response = make_response(xml_content)
@@ -855,9 +851,7 @@ def create_aggregate_feed_link() -> ResponseReturnValue:
     token_id = str(result.data["token_id"])
     secret = str(result.data["secret"])
 
-    parsed = urlparse(request.host_url)
-    netloc = parsed.netloc
-    scheme = parsed.scheme
+    base_url = _get_base_url()
     path = f"/feed/user/{user.id}"
 
     # If auth is disabled, we don't strictly need the token params,
@@ -866,10 +860,9 @@ def create_aggregate_feed_link() -> ResponseReturnValue:
     settings = current_app.config.get("AUTH_SETTINGS")
     if settings and settings.require_auth:
         query = urlencode({"feed_token": token_id, "feed_secret": secret})
+        full_url = f"{base_url}{path}?{query}"
     else:
-        query = ""
-
-    full_url = urlunparse((scheme, netloc, path, "", query, ""))
+        full_url = f"{base_url}{path}"
 
     return (
         jsonify(

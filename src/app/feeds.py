@@ -1,5 +1,7 @@
 import datetime
+import json
 import logging
+import re
 import uuid
 from email.utils import format_datetime, parsedate_to_datetime
 from typing import Any, Iterable, Optional, cast
@@ -16,6 +18,20 @@ from app.writer.client import writer_client
 from podcast_processor.podcast_downloader import find_audio_link
 
 logger = logging.getLogger("global_logger")
+
+# Regex for RFC 7239 Forwarded header proto extraction: proto="https" or proto=https
+_FORWARDED_PROTO_RE = re.compile(r'(?:^|[;,])\s*proto=("?)(https?)\1', re.IGNORECASE)
+
+
+def _normalize_proto(value: Any) -> Optional[str]:
+    """Normalise a reverse-proxy header value to 'http' or 'https', or return None.
+
+    Handles comma-separated lists (takes the first value) and quoted strings.
+    """
+    if value is None:
+        return None
+    first = str(value).split(",", maxsplit=1)[0].strip().strip('"').lower()
+    return first if first in {"http", "https"} else None
 
 
 def is_feed_active_for_user(feed_id: int, user: User) -> bool:
@@ -99,16 +115,49 @@ def _get_base_url() -> str:
 
         # Fall back to Host header with scheme detection
         if host:
-            # Check multiple indicators for HTTPS
+            # Try multiple forwarded-proto headers used by different reverse proxies
+            forwarded_proto: Optional[str] = None
+            for header_name in (
+                "X-Forwarded-Proto",
+                "X-Forwarded-Protocol",
+                "X-Forwarded-Scheme",
+                "X-Url-Scheme",
+            ):
+                forwarded_proto = _normalize_proto(request.headers.get(header_name))
+                if forwarded_proto:
+                    break
+
+            # RFC 7239 Forwarded header: Forwarded: proto=https; host=example.com
+            if not forwarded_proto:
+                forwarded = request.headers.get("Forwarded")
+                if forwarded:
+                    match = _FORWARDED_PROTO_RE.search(forwarded)
+                    if match:
+                        forwarded_proto = _normalize_proto(match.group(2))
+
+            # Cloudflare CF-Visitor header: {"scheme":"https"}
+            if not forwarded_proto:
+                cf_visitor = request.headers.get("CF-Visitor")
+                if cf_visitor:
+                    try:
+                        forwarded_proto = _normalize_proto(
+                            json.loads(cf_visitor).get("scheme")
+                        )
+                    except Exception:  # pylint: disable=broad-except
+                        forwarded_proto = None
+
+            # Check secondary indicators for HTTPS when no forwarded-proto header was found
             is_https = (
                 request.is_secure
-                or request.headers.get("X-Forwarded-Proto") == "https"
                 or request.headers.get("Strict-Transport-Security") is not None
                 or request.headers.get("X-Forwarded-Ssl") == "on"
+                or request.headers.get("Front-End-Https") == "on"
+                or request.headers.get("X-Forwarded-Port") == "443"
                 or request.environ.get("HTTPS") == "on"
                 or request.scheme == "https"
             )
-            scheme = "https" if is_https else "http"
+            # forwarded_proto (explicit proxy header) takes precedence over is_https
+            scheme = forwarded_proto or ("https" if is_https else "http")
             return f"{scheme}://{host}"
     except RuntimeError:
         # Working outside of request context
