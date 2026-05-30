@@ -15,6 +15,8 @@ import type {
   BillingSummary,
   LandingStatus,
   PagedResult,
+  AuthUser,
+  ManagedUser,
 } from '../types';
 
 const API_BASE_URL = '';
@@ -445,7 +447,7 @@ export const authApi = {
     return response.data;
   },
 
-  login: async (username: string, password: string): Promise<{ user: { id: number; username: string; role: string } }> => {
+  login: async (username: string, password: string): Promise<{ user: AuthUser }> => {
     const response = await api.post('/api/auth/login', { username, password });
     return response.data;
   },
@@ -454,7 +456,7 @@ export const authApi = {
     await api.post('/api/auth/logout');
   },
 
-  getCurrentUser: async (): Promise<{ user: { id: number; username: string; role: string } }> => {
+  getCurrentUser: async (): Promise<{ user: AuthUser }> => {
     const response = await api.get('/api/auth/me');
     return response.data;
   },
@@ -464,12 +466,12 @@ export const authApi = {
     return response.data;
   },
 
-  listUsers: async (): Promise<{ users: Array<{ id: number; username: string; role: string; created_at: string; updated_at: string; last_active?: string | null; feed_allowance?: number; feed_subscription_status?: string; manual_feed_allowance?: number | null }> }> => {
+  listUsers: async (): Promise<{ users: ManagedUser[] }> => {
     const response = await api.get('/api/auth/users');
     return response.data;
   },
 
-  createUser: async (payload: { username: string; password: string; role: string }): Promise<{ user: { id: number; username: string; role: string; created_at: string; updated_at: string } }> => {
+  createUser: async (payload: { username: string; password: string; role: string }): Promise<{ user: ManagedUser }> => {
     const response = await api.post('/api/auth/users', payload);
     return response.data;
   },
@@ -481,6 +483,11 @@ export const authApi = {
 
   deleteUser: async (username: string): Promise<{ status: string }> => {
     const response = await api.delete(`/api/auth/users/${username}`);
+    return response.data;
+  },
+
+  updateSettings: async (payload: { dark_mode?: boolean }): Promise<{ status: string; dark_mode: boolean }> => {
+    const response = await api.patch('/api/auth/settings', payload);
     return response.data;
   },
 };

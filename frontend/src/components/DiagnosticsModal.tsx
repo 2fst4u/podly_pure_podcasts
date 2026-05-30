@@ -77,11 +77,11 @@ export default function DiagnosticsModal() {
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={close} />
 
-      <div className="relative w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
-        <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-gray-200">
+      <div className="relative w-full max-w-3xl bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden">
+        <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-gray-200 dark:border-gray-700">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Troubleshooting</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Troubleshooting</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {currentError
                 ? 'An error occurred. You can report it with logs.'
                 : 'Use this to collect logs for a bug report.'}
@@ -90,22 +90,22 @@ export default function DiagnosticsModal() {
           <button
             type="button"
             onClick={close}
-            className="px-3 py-1.5 text-sm border border-gray-200 rounded-md hover:bg-gray-100"
+            className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Dismiss
           </button>
         </div>
 
         {currentError && (
-          <div className="px-5 py-4 border-b border-gray-200 bg-red-50">
-            <div className="text-sm font-medium text-red-900">{currentError.title}</div>
-            <div className="text-sm text-red-800 mt-1">{currentError.message}</div>
+          <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-red-50 dark:bg-red-900/20">
+            <div className="text-sm font-medium text-red-900 dark:text-red-300">{currentError.title}</div>
+            <div className="text-sm text-red-800 dark:text-red-300 mt-1">{currentError.message}</div>
           </div>
         )}
 
         <div className="px-5 py-4">
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between mb-3">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-700 dark:text-gray-300">
               Showing last {recentEntries.length} log entries (session only).
             </div>
             <div className="flex gap-2">
@@ -126,7 +126,7 @@ export default function DiagnosticsModal() {
                     // ignore
                   }
                 }}
-                className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-sm font-medium hover:bg-gray-100"
+                className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Copy logs
               </button>
@@ -135,16 +135,16 @@ export default function DiagnosticsModal() {
                 onClick={() => {
                   clear();
                 }}
-                className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-sm font-medium hover:bg-gray-100"
+                className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Clear
               </button>
             </div>
           </div>
 
-          <div className="border border-gray-200 rounded-md bg-gray-50 overflow-hidden">
+          <div className="border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 overflow-hidden">
             <div className="max-h-[45vh] overflow-auto">
-              <pre className="text-xs text-gray-800 p-3 whitespace-pre-wrap break-words">
+              <pre className="text-xs text-gray-800 dark:text-gray-100 p-3 whitespace-pre-wrap break-words">
 {recentEntries
   .map((e) => {
     const base = `[${formatTs(e.ts)}] ${e.level.toUpperCase()}: ${e.message}`;
@@ -160,7 +160,7 @@ export default function DiagnosticsModal() {
             </div>
           </div>
 
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             Sensitive fields like tokens/cookies are redacted.
           </div>
         </div>

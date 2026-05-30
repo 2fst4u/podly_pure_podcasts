@@ -187,6 +187,7 @@ export interface AuthUser {
   id: number;
   username: string;
   role: 'admin' | 'user' | string;
+  dark_mode: boolean;
   feed_allowance?: number;
   feed_subscription_status?: string;
   manual_feed_allowance?: number | null;

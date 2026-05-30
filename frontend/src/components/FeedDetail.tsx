@@ -464,14 +464,14 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
   };
 
   return (
-    <div className="h-full flex flex-col bg-white relative">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800 relative">
       {/* Mobile Header */}
-      <div className="flex items-center justify-between p-4 border-b lg:hidden">
-        <h2 className="text-lg font-semibold text-gray-900">Podcast Details</h2>
+      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700 lg:hidden">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Podcast Details</h2>
         {onClose && (
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                   aria-label="Close modal"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -482,7 +482,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
       </div>
 
       {/* Sticky Header - appears when scrolling */}
-      <div className={`absolute top-16 lg:top-0 left-0 right-0 z-10 bg-white border-b transition-all duration-300 ${
+      <div className={`absolute top-16 lg:top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 border-b dark:border-gray-700 transition-all duration-300 ${
         showStickyHeader ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
       }`}>
         <div className="p-4">
@@ -495,15 +495,15 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
               />
             )}
             <div className="flex-1 min-w-0">
-              <h2 className="font-semibold text-gray-900 truncate">{currentFeed.title}</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-white truncate">{currentFeed.title}</h2>
               {currentFeed.author && (
-                <p className="text-sm text-gray-600 truncate">by {currentFeed.author}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">by {currentFeed.author}</p>
               )}
             </div>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white"
+              className="text-sm border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -518,7 +518,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
       {/* Scrollable Content */}
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {/* Feed Info Header */}
-        <div ref={feedHeaderRef} className="p-6 border-b">
+        <div ref={feedHeaderRef} className="p-6 border-b dark:border-gray-700">
           <div className="flex flex-col gap-6">
             {/* Top Section: Image and Title */}
             <div className="flex items-end gap-6">
@@ -531,8 +531,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                     className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg object-cover shadow-lg"
                   />
                 ) : (
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg bg-gray-200 flex items-center justify-center shadow-lg">
-                    <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center shadow-lg">
+                    <svg className="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                     </svg>
                   </div>
@@ -541,11 +541,11 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
               {/* Title aligned to bottom-left of image */}
               <div className="flex-1 min-w-0 pb-2">
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">{currentFeed.title}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{currentFeed.title}</h1>
                 {currentFeed.author && (
-                  <p className="text-lg text-gray-600">by {currentFeed.author}</p>
+                  <p className="text-lg text-gray-600 dark:text-gray-400">by {currentFeed.author}</p>
                 )}
-                <div className="mt-2 text-sm text-gray-500">
+                <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   <span>{totalCount} episodes visible</span>
                 </div>
                 {requireAuth && isAdmin && (
@@ -553,14 +553,14 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium border ${
                         isMember
-                          ? 'bg-green-50 text-green-700 border-green-200'
-                          : 'bg-gray-100 text-gray-600 border-gray-200'
+                          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700'
                       }`}
                     >
                       {isMember ? 'Joined' : 'Not joined'}
                     </span>
                     {isMember && !isActiveSubscription && (
-                      <span className="px-2 py-1 rounded-full text-xs font-medium border bg-amber-50 text-amber-700 border-amber-200">
+                      <span className="px-2 py-1 rounded-full text-xs font-medium border bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800">
                         Paused
                       </span>
                     )}
@@ -617,8 +617,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                   title="Refresh feed from source"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                     refreshFeedMutation.isPending
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
                   <img
@@ -635,7 +635,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
               <div className="relative menu-container">
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
+                  className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                   aria-label="Feed options"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -645,7 +645,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
                 {/* Dropdown Menu */}
                 {showMenu && (
-                  <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 max-w-[calc(100vw-2rem)]">
+                  <div className="absolute top-full right-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 max-w-[calc(100vw-2rem)]">
                       {canBulkModifyEpisodes && (
                         <>
                           <button
@@ -656,7 +656,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             setShowMenu(false);
                           }}
                           disabled={bulkWhitelistMutation.isPending || totalCount === 0 || allWhitelisted}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span className="text-green-600">✓</span>
                           Enable all episodes
@@ -670,7 +670,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             setShowMenu(false);
                           }}
                           disabled={bulkWhitelistMutation.isPending || totalCount === 0 || !allWhitelisted}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span className="text-red-600">⛔</span>
                           Disable all episodes
@@ -684,7 +684,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             setShowHelp(!showHelp);
                             setShowMenu(false);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3"
                         >
                           <span className="text-blue-600">ℹ️</span>
                           Explain whitelist
@@ -696,7 +696,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                         handleCopyOriginalRssToClipboard();
                         setShowMenu(false);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3"
                     >
                       <img src="/rss-round-color-icon.svg" alt="Original RSS" className="w-4 h-4" />
                       Original RSS feed
@@ -704,14 +704,14 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
                     {requireAuth && isAdmin && isMember && (
                       <>
-                        <div className="border-t border-gray-100 my-1"></div>
+                        <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
                         <button
                           onClick={() => {
                             leaveFeedMutation.mutate();
                             setShowMenu(false);
                           }}
                           disabled={leaveFeedMutation.isPending}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -723,7 +723,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
                     {canDeleteFeed && (
                       <>
-                        <div className="border-t border-gray-100 my-1"></div>
+                        <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
 
                         <button
                           onClick={() => {
@@ -731,7 +731,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             setShowMenu(false);
                           }}
                           disabled={deleteFeedMutation.isPending}
-                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -747,19 +747,19 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
             {/* Feed Description */}
             {currentFeed.description && (
-              <div className="text-gray-700 leading-relaxed">
+              <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>{currentFeed.description.replace(/<[^>]*>/g, '')}</p>
               </div>
             )}
 
             {isAdmin && (
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
                 <div className="flex flex-col gap-2">
                   <div>
-                    <label className="text-sm font-medium text-gray-900">
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">
                       Auto-whitelist new episodes
                     </label>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       Overrides the global setting. Global default: {autoWhitelistDefaultLabel}.
                     </p>
                   </div>
@@ -767,7 +767,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                     value={autoWhitelistSelectValue}
                     onChange={(e) => handleAutoWhitelistOverrideChange(e.target.value)}
                     disabled={updateFeedSettingsMutation.isPending}
-                    className={`text-sm border border-gray-300 rounded-md px-3 py-2 bg-white ${
+                    className={`text-sm border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
                       updateFeedSettingsMutation.isPending
                         ? 'opacity-60 cursor-not-allowed'
                         : ''
@@ -785,13 +785,13 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
         {/* Inactive Subscription Warning */}
         {currentFeed.is_member && currentFeed.is_active_subscription === false && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
-            <svg className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex items-start gap-3">
+            <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <h3 className="text-sm font-medium text-amber-800">Processing Paused</h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300">Processing Paused</h3>
+              <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
                 This feed exceeds your plan's allowance. New episodes will not be processed automatically until you upgrade your plan or leave other feeds.
               </p>
             </div>
@@ -799,13 +799,13 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
         )}
 
         {/* Episodes Header with Sort Only */}
-        <div className="p-4 border-b bg-gray-50">
+        <div className="p-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Episodes</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Episodes</h3>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white"
+              className="text-sm border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -816,10 +816,10 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
             {/* Help Explainer (admins only) */}
             {showHelp && isAdmin && (
-          <div className="bg-blue-50 border-b border-blue-200 p-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800 p-4">
             <div className="max-w-2xl">
-              <h4 className="font-semibold text-blue-900 mb-2">About Enabling & Disabling Ad Removal</h4>
-              <div className="text-sm text-blue-800 space-y-2 text-left">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">About Enabling & Disabling Ad Removal</h4>
+              <div className="text-sm text-blue-800 dark:text-blue-300 space-y-2 text-left">
                 <p>
                   <strong>Enabled episodes</strong> are processed by Podly to automatically detect and remove advertisements,
                   giving you a clean, ad-free listening experience.
@@ -835,7 +835,7 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
               </div>
               <button
                 onClick={() => setShowHelp(false)}
-                className="mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium"
+                className="mt-3 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
               >
                 Got it, hide this explanation
               </button>
@@ -849,22 +849,22 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
             <div className="p-6">
               <div className="animate-pulse space-y-4">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="h-20 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
                 ))}
               </div>
             </div>
           ) : error ? (
             <div className="p-6">
-              <p className="text-red-600">Failed to load episodes</p>
+              <p className="text-red-600 dark:text-red-400">Failed to load episodes</p>
             </div>
           ) : sortedEpisodes.length === 0 ? (
             <div className="p-6 text-center">
-              <p className="text-gray-500">No episodes found</p>
+              <p className="text-gray-500 dark:text-gray-400">No episodes found</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {sortedEpisodes.map((episode) => (
-                <div key={episode.id} className="p-4 hover:bg-gray-50">
+                <div key={episode.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div className={`flex flex-col ${episode.whitelisted ? 'gap-3' : 'gap-2'}`}>
                     {/* Top Section: Thumbnail and Title */}
                     <div className="flex items-start gap-3">
@@ -878,8 +878,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             className="w-16 h-16 rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                             </svg>
                           </div>
@@ -888,10 +888,10 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
 
                       {/* Title and Feed Name */}
                       <div className="flex-1 min-w-0 text-left">
-                        <h4 className="font-medium text-gray-900 mb-1 line-clamp-2 text-left">
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-1 line-clamp-2 text-left">
                           {episode.title}
                         </h4>
-                        <p className="text-sm text-gray-600 text-left">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-left">
                           {currentFeed.title}
                         </p>
                       </div>
@@ -900,14 +900,14 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                     {/* Episode Description */}
                     {episode.description && (
                       <div className="text-left">
-                        <p className="text-sm text-gray-500 line-clamp-3">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3">
                           {episode.description.replace(/<[^>]*>/g, '').substring(0, 300)}...
                         </p>
                       </div>
                     )}
 
                     {/* Metadata: Status, Date and Duration */}
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       {showWhitelistUi && (
                         <>
                           <button
@@ -915,8 +915,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                             disabled={whitelistMutation.isPending}
                             className={`px-2 py-1 text-xs font-medium rounded-full transition-colors flex items-center justify-center gap-1 ${
                               episode.whitelisted
-                                ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600'
                             } ${whitelistMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                             {whitelistMutation.isPending ? (
@@ -1002,8 +1002,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
         </div>
 
         {totalCount > 0 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t bg-white">
-            <div className="text-sm text-gray-600">
+          <div className="flex items-center justify-between px-4 py-3 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               Showing {visibleStart}-{visibleEnd} of {totalCount} episodes
             </div>
             <div className="flex items-center gap-2">
@@ -1012,13 +1012,13 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                 disabled={page === 1 || isLoading || isFetching}
                 className={`px-3 py-1 text-sm rounded-md border transition-colors ${
                   page === 1 || isLoading || isFetching
-                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700 dark:text-gray-300">
                 Page {page} of {totalPages}
               </span>
               <button
@@ -1026,8 +1026,8 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
                 disabled={page >= totalPages || isLoading || isFetching}
                 className={`px-3 py-1 text-sm rounded-md border transition-colors ${
                   page >= totalPages || isLoading || isFetching
-                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
                 Next
@@ -1040,32 +1040,32 @@ export default function FeedDetail({ feed, onClose, onFeedDeleted }: FeedDetailP
       {showProcessingModal && pendingEpisode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={handleCancelProcessing}>
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4"
             onClick={(event) => event.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-gray-900">Enable episode</h3>
-            <p className="text-sm text-gray-600">{pendingEpisode.title}</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enable episode</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{pendingEpisode.title}</p>
             {isEstimating && (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-gray-600 dark:border-t-gray-300 rounded-full animate-spin" />
                 Estimating processing time…
               </div>
             )}
             {!isEstimating && estimateError && (
-              <p className="text-sm text-red-600">{estimateError}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">{estimateError}</p>
             )}
             {!isEstimating && processingEstimate && (
-              <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 space-y-1">
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300 space-y-1">
                 <p><strong>Estimated minutes:</strong> {processingEstimate.estimated_minutes.toFixed(2)}</p>
                 {!processingEstimate.can_process && (
-                  <p className="text-red-600 font-medium">Processing not available for this episode.</p>
+                  <p className="text-red-600 dark:text-red-400 font-medium">Processing not available for this episode.</p>
                 )}
               </div>
             )}
             <div className="flex justify-end gap-3">
               <button
                 onClick={handleCancelProcessing}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
               >
                 Cancel
               </button>
