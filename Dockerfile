@@ -7,9 +7,6 @@ WORKDIR /app
 # Enable pnpm
 RUN corepack enable pnpm
 
-# Allow scripts to run for all dependencies (pnpm v10+ requires this for build scripts like esbuild)
-RUN pnpm config set only-allow-trusted-dependencies false
-
 # Copy frontend package files
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
