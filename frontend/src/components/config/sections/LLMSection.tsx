@@ -58,10 +58,10 @@ export default function LLMSection() {
         <label className="flex items-start justify-between gap-3">
           <div className="w-60">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">OpenAI Base URL</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">OpenAI Base URL</span>
               <button
                 type="button"
-                className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50"
+                className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 onClick={() => setShowBaseUrlInfo((v) => !v)}
                 title="When is this used?"
                 aria-label="More information about OpenAI Base URL"
@@ -70,7 +70,7 @@ export default function LLMSection() {
               </button>
             </div>
             {getEnvHint('llm.openai_base_url')?.env_var && (
-              <code className="mt-1 block text-xs text-gray-500 font-mono">
+              <code className="mt-1 block text-xs text-gray-500 dark:text-gray-400 font-mono">
                 {getEnvHint('llm.openai_base_url')?.env_var}
               </code>
             )}
@@ -198,14 +198,14 @@ export default function LLMSection() {
         ))}
       </datalist>
 
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </div>
   );
 }
 
 function BaseUrlInfoBox() {
   return (
-    <div className="text-xs text-gray-700 bg-blue-50 border border-blue-200 rounded p-3 space-y-2">
+    <div className="text-xs text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded p-3 space-y-2">
       <p className="font-semibold">When is Base URL used?</p>
       <p>
         The Base URL is <strong>only used for models without a provider prefix</strong>. LiteLLM
@@ -215,17 +215,17 @@ function BaseUrlInfoBox() {
         <p className="font-medium">✅ Base URL is IGNORED for:</p>
         <ul className="list-disc pl-5 space-y-0.5">
           <li>
-            <code className="bg-white px-1 rounded">groq/openai/gpt-oss-120b</code> → Groq API
+            <code className="bg-white dark:bg-gray-800 px-1 rounded">groq/openai/gpt-oss-120b</code> → Groq API
           </li>
           <li>
-            <code className="bg-white px-1 rounded">anthropic/claude-3.5-sonnet</code> → Anthropic
+            <code className="bg-white dark:bg-gray-800 px-1 rounded">anthropic/claude-3.5-sonnet</code> → Anthropic
             API
           </li>
           <li>
-            <code className="bg-white px-1 rounded">gemini/gemini-3-flash-preview</code> → Google API
+            <code className="bg-white dark:bg-gray-800 px-1 rounded">gemini/gemini-3-flash-preview</code> → Google API
           </li>
           <li>
-            <code className="bg-white px-1 rounded">gemini/gemini-2.0-flash</code> → Google API
+            <code className="bg-white dark:bg-gray-800 px-1 rounded">gemini/gemini-2.0-flash</code> → Google API
           </li>
         </ul>
       </div>
@@ -233,13 +233,13 @@ function BaseUrlInfoBox() {
         <p className="font-medium">⚙️ Base URL is USED for:</p>
         <ul className="list-disc pl-5 space-y-0.5">
           <li>
-            Unprefixed models like <code className="bg-white px-1 rounded">gpt-4o</code>
+            Unprefixed models like <code className="bg-white dark:bg-gray-800 px-1 rounded">gpt-4o</code>
           </li>
           <li>Self-hosted OpenAI-compatible endpoints</li>
           <li>LiteLLM proxy servers or local LLMs</li>
         </ul>
       </div>
-      <p className="italic text-gray-600">For the default Groq setup, you don't need to set this.</p>
+      <p className="italic text-gray-600 dark:text-gray-400">For the default Groq setup, you don't need to set this.</p>
     </div>
   );
 }

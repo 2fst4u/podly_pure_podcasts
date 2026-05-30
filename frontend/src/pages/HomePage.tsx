@@ -80,8 +80,8 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-md p-4">
-        <p className="text-red-800">Error loading feeds. Please try again.</p>
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+        <p className="text-red-800 dark:text-red-300">Error loading feeds. Please try again.</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export default function HomePage() {
         selectedFeed ? 'hidden lg:flex' : 'flex'
       }`}>
         <div className="flex justify-between items-center mb-6 gap-3">
-          <h2 className="text-2xl font-bold text-gray-900">Podcast Feeds</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Podcast Feeds</h2>
           <div className="flex items-center gap-2">
             {canRefreshAll && (
               <button
@@ -123,8 +123,8 @@ export default function HomePage() {
                 aria-label="Refresh all feeds"
                 className={`flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                   refreshAllMutation.isPending
-                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'border-gray-200 text-gray-600 hover:bg-gray-100'
+                    ? 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 <img
@@ -137,7 +137,7 @@ export default function HomePage() {
             )}
             <button
               onClick={handleCopyAggregateLink}
-              className="flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+              className="flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               title="Copy your aggregate feed URL (last 3 episodes from each feed)"
               aria-label="Copy your aggregate feed URL"
             >
@@ -179,7 +179,7 @@ export default function HomePage() {
       {selectedFeed && (
         <div className={`flex-1 lg:flex-[2] ${
           selectedFeed ? 'flex' : 'hidden lg:flex'
-        } flex-col bg-white rounded-lg shadow border overflow-hidden`}>
+        } flex-col bg-white dark:bg-gray-800 rounded-lg shadow border dark:border-gray-700 overflow-hidden`}>
           <FeedDetail 
             feed={selectedFeed} 
             onClose={() => setSelectedFeed(null)}
@@ -193,13 +193,13 @@ export default function HomePage() {
 
       {/* Empty State for Desktop */}
       {!selectedFeed && (
-        <div className="hidden lg:flex flex-[2] items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+        <div className="hidden lg:flex flex-[2] items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
           <div className="text-center">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No podcast selected</h3>
-            <p className="mt-1 text-sm text-gray-500">Select a podcast from the list to view details and episodes.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No podcast selected</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Select a podcast from the list to view details and episodes.</p>
           </div>
         </div>
       )}
@@ -210,19 +210,19 @@ export default function HomePage() {
           onClick={() => setShowAddForm(false)}
         >
           <div
-            className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col max-h-[90vh]"
+            className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col max-h-[90vh]"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-gray-200 px-4 sm:px-6 py-4">
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
               <div>
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">Add a Podcast Feed</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Add a Podcast Feed</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Paste an RSS URL or search the catalog to find shows to follow.
                 </p>
               </div>
               <button
                 onClick={() => setShowAddForm(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Close add feed modal"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
