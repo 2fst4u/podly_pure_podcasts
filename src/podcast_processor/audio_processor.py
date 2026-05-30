@@ -354,7 +354,9 @@ class AudioProcessor:
         # Use the processed file's actual duration (shorter than original after ad removal)
         processed_duration_ms = get_audio_duration_ms(output_path)
         post.duration = int(
-            processed_duration_ms / 1000 if processed_duration_ms is not None else duration_ms / 1000
+            processed_duration_ms / 1000
+            if processed_duration_ms is not None
+            else duration_ms / 1000
         )
 
         post.processed_audio_path = output_path
