@@ -16,6 +16,13 @@ const formatDuration = (seconds: number) => {
   return `${minutes}m ${secs}s`;
 };
 
+const formatSecondsToHMS = (seconds: number) => {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
 const formatTimestamp = (timestamp: string | null) => {
   if (!timestamp) return 'N/A';
   return new Date(timestamp).toLocaleString();
@@ -320,7 +327,7 @@ export default function ProcessingStatsButton({
                                 }`}>
                                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{segment.sequence_num}</td>
                                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                    {segment.start_time}s - {segment.end_time}s
+                                    {formatSecondsToHMS(segment.start_time)} - {formatSecondsToHMS(segment.end_time)}
                                   </td>
                                   <td className="px-4 py-3">
                                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
@@ -373,7 +380,7 @@ export default function ProcessingStatsButton({
                                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{identification.id}</td>
                                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{identification.transcript_segment_id}</td>
                                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                    {identification.segment_start_time}s - {identification.segment_end_time}s
+                                    {formatSecondsToHMS(identification.segment_start_time)} - {formatSecondsToHMS(identification.segment_end_time)}
                                   </td>
                                   <td className="px-4 py-3">
                                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
