@@ -170,6 +170,10 @@ def whitelist_all(f_id: str, val: str) -> flask.Response:
 
 @main_bp.route("/set_whitelist/<string:p_guid>/<val>", methods=["GET"])
 def set_whitelist(p_guid: str, val: str) -> flask.Response:
+    _, error_response = require_admin("whitelist this episode")
+    if error_response:
+        return error_response
+
     logger.info(f"Setting whitelist status for post with GUID: {p_guid} to {val}")
     post = Post.query.filter_by(guid=p_guid).first()
     if post is None:
