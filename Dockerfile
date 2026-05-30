@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Multi-stage build for combined frontend and backend
-FROM node:20-alpine AS frontend-build
+FROM node:22-alpine AS frontend-build
 
 WORKDIR /app
 
