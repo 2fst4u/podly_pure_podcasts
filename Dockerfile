@@ -7,6 +7,9 @@ WORKDIR /app
 # Enable pnpm
 RUN corepack enable pnpm
 
+# Allow scripts to run for all dependencies (pnpm v10+ requires this for build scripts like esbuild)
+RUN pnpm config set only-allow-trusted-dependencies false
+
 # Copy frontend package files
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -73,10 +76,6 @@ RUN groupadd -r appuser && \
     mkdir -p /home/appuser && \
     chown -R appuser:appuser /home/appuser
 
-# Create necessary directories and set permissions
-RUN mkdir -p /app/processing /app/src/instance /app/src/instance/data /app/src/instance/data/in /app/src/instance/data/srv /app/src/instance/config /app/src/instance/db && \
-    chown -R appuser:appuser /app
-
 # Copy compiled Python packages from builder stage
 COPY --from=python-builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=python-builder /usr/local/bin /usr/local/bin
@@ -89,7 +88,12 @@ RUN chmod +x scripts/start_services.sh
 
 # Copy application code (frequent changes)
 COPY --chown=appuser:appuser src/ ./src/
-RUN rm -rf ./src/instance
+
+# Cleanup development instance data AND then create fresh runtime directories
+# This must happen in this order to ensure fresh runtime dirs are not deleted
+RUN rm -rf ./src/instance && \
+    mkdir -p /app/processing /app/src/instance /app/src/instance/data /app/src/instance/data/in /app/src/instance/data/srv /app/src/instance/config /app/src/instance/db && \
+    chown -R appuser:appuser /app
 
 # Copy built frontend assets to Flask static folder
 COPY --from=frontend-build --chown=appuser:appuser /app/dist ./src/app/static
