@@ -207,7 +207,7 @@ class PodcastProcessor:
                     # Update the database with the processed audio path
                     self._remove_unprocessed_audio(post)
                     duration_s = self._probe_duration_seconds(processed_audio_path)
-                    update_fields: dict = {
+                    update_fields: Dict[str, Any] = {
                         "processed_audio_path": processed_audio_path,
                         "unprocessed_audio_path": None,
                     }
@@ -706,7 +706,7 @@ class PodcastProcessor:
                 "Updated the database path."
             )
             duration_s = self._probe_duration_seconds(processed_path_str)
-            update_fields = {"processed_audio_path": processed_path_str}
+            update_fields: Dict[str, Any] = {"processed_audio_path": processed_path_str}
             if duration_s is not None:
                 update_fields["duration"] = duration_s
             result = writer_client.update(
