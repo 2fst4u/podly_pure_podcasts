@@ -44,7 +44,9 @@ class TestGetContext:
         segs = _segs(0.0, 5.0, 25.0, 30.0)
         assert refiner._get_context(10.0, 20.0, segs) == []
 
-    def test_eight_context_segments_on_each_side(self, refiner: BoundaryRefiner) -> None:
+    def test_eight_context_segments_on_each_side(
+        self, refiner: BoundaryRefiner
+    ) -> None:
         segs = _segs(*range(20))
         # ad covers t=10 (index 10); window = [max(0,10-8), min(20,10+9)] = [2, 19]
         ctx = refiner._get_context(10.0, 10.0, segs)
@@ -77,7 +79,9 @@ class TestGetContext:
 
 
 class TestHeuristicRefine:
-    def test_no_pattern_keeps_original_boundaries(self, refiner: BoundaryRefiner) -> None:
+    def test_no_pattern_keeps_original_boundaries(
+        self, refiner: BoundaryRefiner
+    ) -> None:
         segs = [
             {"start_time": 8.0, "end_time": 9.0, "text": "hello world"},
             {"start_time": 12.0, "end_time": 13.0, "text": "goodbye world"},
@@ -97,7 +101,11 @@ class TestHeuristicRefine:
 
     def test_outro_pattern_moves_end_later(self, refiner: BoundaryRefiner) -> None:
         segs = [
-            {"start_time": 12.0, "end_time": 14.0, "text": "visit example.com for more"},
+            {
+                "start_time": 12.0,
+                "end_time": 14.0,
+                "text": "visit example.com for more",
+            },
         ]
         result = refiner._heuristic_refine(10.0, 11.0, segs)
         assert result.refined_end == 14.0
@@ -133,7 +141,9 @@ class TestValidate:
         assert result.refined_start == 9.0
         assert result.refined_end == 21.0
 
-    def test_start_clamped_when_extended_too_far(self, refiner: BoundaryRefiner) -> None:
+    def test_start_clamped_when_extended_too_far(
+        self, refiner: BoundaryRefiner
+    ) -> None:
         far_start = 10.0 - MAX_START_EXTENSION_SECONDS - 5.0
         r = BoundaryRefinement(far_start, 20.0, "x", "x")
         result = refiner._validate(10.0, 20.0, r)
@@ -145,7 +155,9 @@ class TestValidate:
         result = refiner._validate(10.0, 20.0, r)
         assert result.refined_end == pytest.approx(20.0 + MAX_END_EXTENSION_SECONDS)
 
-    def test_inverted_boundaries_reset_to_original(self, refiner: BoundaryRefiner) -> None:
+    def test_inverted_boundaries_reset_to_original(
+        self, refiner: BoundaryRefiner
+    ) -> None:
         r = BoundaryRefinement(15.0, 5.0, "x", "x")  # start > end
         result = refiner._validate(10.0, 20.0, r)
         assert result.refined_start == 10.0
@@ -183,7 +195,10 @@ class TestRefine:
     @patch("podcast_processor.boundary_refiner.writer_client")
     @patch("podcast_processor.boundary_refiner.litellm.completion")
     def test_successful_llm_parse_returns_refined_boundaries(
-        self, mock_completion: MagicMock, mock_writer: MagicMock, refiner: BoundaryRefiner
+        self,
+        mock_completion: MagicMock,
+        mock_writer: MagicMock,
+        refiner: BoundaryRefiner,
     ) -> None:
         mock_completion.return_value = _llm_response(9.5, 20.5)
         result = refiner.refine(10.0, 20.0, 0.9, _segs(*range(20)))
@@ -193,7 +208,10 @@ class TestRefine:
     @patch("podcast_processor.boundary_refiner.writer_client")
     @patch("podcast_processor.boundary_refiner.litellm.completion")
     def test_unparseable_json_falls_back_to_heuristic(
-        self, mock_completion: MagicMock, mock_writer: MagicMock, refiner: BoundaryRefiner
+        self,
+        mock_completion: MagicMock,
+        mock_writer: MagicMock,
+        refiner: BoundaryRefiner,
     ) -> None:
         choice = MagicMock()
         choice.message.content = "I cannot determine the boundaries."
@@ -208,7 +226,10 @@ class TestRefine:
     @patch("podcast_processor.boundary_refiner.writer_client")
     @patch("podcast_processor.boundary_refiner.litellm.completion")
     def test_llm_exception_falls_back_to_heuristic(
-        self, mock_completion: MagicMock, mock_writer: MagicMock, refiner: BoundaryRefiner
+        self,
+        mock_completion: MagicMock,
+        mock_writer: MagicMock,
+        refiner: BoundaryRefiner,
     ) -> None:
         mock_completion.side_effect = RuntimeError("network error")
         result = refiner.refine(10.0, 20.0, 0.9, _segs(*range(20)))
@@ -218,7 +239,10 @@ class TestRefine:
     @patch("podcast_processor.boundary_refiner.writer_client")
     @patch("podcast_processor.boundary_refiner.litellm.completion")
     def test_validate_clamps_overshooting_llm_response(
-        self, mock_completion: MagicMock, mock_writer: MagicMock, refiner: BoundaryRefiner
+        self,
+        mock_completion: MagicMock,
+        mock_writer: MagicMock,
+        refiner: BoundaryRefiner,
     ) -> None:
         # LLM returns start well before allowed window
         mock_completion.return_value = _llm_response(
