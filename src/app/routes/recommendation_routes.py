@@ -1,10 +1,11 @@
 import logging
+from typing import Optional
 
 from flask import Blueprint, g, jsonify, request
 from flask.typing import ResponseReturnValue
 
 from app.auth import is_auth_enabled
-from app.models import DismissedRecommendation, Feed, PendingRecommendation, UserFeed
+from app.models import DismissedRecommendation, Feed, PendingRecommendation, User, UserFeed
 from app.recommendation_service import get_recommendation
 from app.runtime_config import config as runtime_config
 from app.writer.client import writer_client
@@ -14,8 +15,8 @@ logger = logging.getLogger("global_logger")
 recommendation_bp = Blueprint("recommendations", __name__)
 
 
-def _current_user():
-    return getattr(g, "current_user", None)
+def _current_user() -> Optional[User]:
+    return getattr(g, "current_user", None)  # type: ignore[no-any-return]
 
 
 @recommendation_bp.route("/api/recommendations", methods=["GET"])
