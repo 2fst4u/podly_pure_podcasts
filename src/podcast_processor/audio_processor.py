@@ -333,9 +333,6 @@ class AudioProcessor:
                 f"Could not determine duration for audio: {post.unprocessed_audio_path}"
             )
 
-        # Store duration in seconds
-        post.duration = duration_ms / 1000.0
-
         merged_ad_segments = self.merge_ad_segments(
             duration_ms=duration_ms,
             ad_segments=ad_segments,
@@ -352,6 +349,14 @@ class AudioProcessor:
             ad_segments_ms=merged_ad_segments,
             fade_ms=self.config.output.fade_ms,
             out_path=output_path,
+        )
+
+        # Use the processed file's actual duration (shorter than original after ad removal)
+        processed_duration_ms = get_audio_duration_ms(output_path)
+        post.duration = int(
+            processed_duration_ms / 1000
+            if processed_duration_ms is not None
+            else duration_ms / 1000
         )
 
         post.processed_audio_path = output_path

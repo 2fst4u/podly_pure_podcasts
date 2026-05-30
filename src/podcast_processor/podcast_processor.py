@@ -13,6 +13,7 @@ from app.extensions import db
 from app.models import Post, ProcessingJob, TranscriptSegment
 from app.writer.client import writer_client
 from podcast_processor.ad_classifier import AdClassifier
+from podcast_processor.audio import get_audio_duration_ms
 from podcast_processor.audio_processor import AudioProcessor
 from podcast_processor.podcast_downloader import PodcastDownloader, sanitize_title
 from podcast_processor.processing_status_manager import ProcessingStatusManager
@@ -205,13 +206,17 @@ class PodcastProcessor:
                     self.logger.info(f"Audio already processed: {post}")
                     # Update the database with the processed audio path
                     self._remove_unprocessed_audio(post)
+                    duration_s = self._probe_duration_seconds(processed_audio_path)
+                    update_fields: dict = {
+                        "processed_audio_path": processed_audio_path,
+                        "unprocessed_audio_path": None,
+                    }
+                    if duration_s is not None:
+                        update_fields["duration"] = duration_s
                     result = writer_client.update(
                         "Post",
                         post.id,
-                        {
-                            "processed_audio_path": processed_audio_path,
-                            "unprocessed_audio_path": None,
-                        },
+                        update_fields,
                         wait=True,
                     )
                     if not result or not result.success:
@@ -567,6 +572,13 @@ class PodcastProcessor:
         if not result or not result.success:
             raise RuntimeError(getattr(result, "error", "Failed to update post"))
 
+    def _probe_duration_seconds(self, audio_path: str) -> Optional[int]:
+        """Return the duration of an audio file in whole seconds, or None on failure."""
+        duration_ms = get_audio_duration_ms(audio_path)
+        if duration_ms is None:
+            return None
+        return int(duration_ms / 1000)
+
     def make_dirs(self, processing_paths: ProcessingPaths) -> None:
         """Create necessary directories for output files."""
         if processing_paths.post_processed_audio_path:
@@ -693,10 +705,14 @@ class PodcastProcessor:
                 f"Found existing processed audio for post '{post.title}' at '{processed_path_str}'. "
                 "Updated the database path."
             )
+            duration_s = self._probe_duration_seconds(processed_path_str)
+            update_fields = {"processed_audio_path": processed_path_str}
+            if duration_s is not None:
+                update_fields["duration"] = duration_s
             result = writer_client.update(
                 "Post",
                 post.id,
-                {"processed_audio_path": processed_path_str},
+                update_fields,
                 wait=True,
             )
             if not result or not result.success:
