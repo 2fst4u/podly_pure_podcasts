@@ -22,7 +22,7 @@ recommendation_bp = Blueprint("recommendations", __name__)
 
 
 def _current_user() -> Optional[User]:
-    return getattr(g, "current_user", None)  # type: ignore[no-any-return]
+    return getattr(g, "current_user", None)
 
 
 @recommendation_bp.route("/api/recommendations", methods=["GET"])
