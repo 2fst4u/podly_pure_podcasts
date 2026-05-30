@@ -321,9 +321,11 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):  # type: ignore[misc]
         guid: str,
         pubDate: Optional[str],
         image_url: Optional[str] = None,
+        duration: Optional[int] = None,
         **kwargs: Any,
     ) -> None:
         self.image_url = image_url
+        self.duration = duration
         super().__init__(
             title=title,
             enclosure=enclosure,
@@ -337,6 +339,10 @@ class ItunesRSSItem(PyRSS2Gen.RSSItem):  # type: ignore[misc]
         if self.image_url:
             handler.startElement("itunes:image", {"href": self.image_url})
             handler.endElement("itunes:image")
+        if self.duration:
+            handler.startElement("itunes:duration", {})
+            handler.characters(str(int(self.duration)))
+            handler.endElement("itunes:duration")
         super().publish_extensions(handler)
 
 
@@ -371,6 +377,7 @@ def feed_item(post: Post, prepend_feed_title: bool = False) -> PyRSS2Gen.RSSItem
         guid=post.guid,
         pubDate=_format_pub_date(post.release_date),
         image_url=post.image_url,
+        duration=int(post.duration) if post.duration else None,
     )
 
     return item
@@ -643,9 +650,21 @@ def get_guid(entry: feedparser.FeedParserDict) -> str:
 
 
 def get_duration(entry: feedparser.FeedParserDict) -> Optional[int]:
+    """Extract duration from feed entry and return it as integer seconds."""
+    raw_duration = entry.get("itunes_duration")
+    if not raw_duration:
+        return None
+
     try:
-        return int(entry["itunes_duration"])
-    except Exception:  # pylint: disable=broad-except
-        logger.error("Failed to get duration")
-        logger.error("Failed to get duration")
+        # Handle "HH:MM:SS" or "MM:SS" formats
+        if isinstance(raw_duration, str) and ":" in raw_duration:
+            parts = raw_duration.split(":")
+            if len(parts) == 3:  # HH:MM:SS
+                return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+            if len(parts) == 2:  # MM:SS
+                return int(parts[0]) * 60 + int(parts[1])
+        # Handle plain seconds (integer or string)
+        return int(raw_duration)
+    except (ValueError, TypeError, IndexError) as e:
+        logger.debug("Failed to parse duration '%s': %s", raw_duration, e)
         return None
