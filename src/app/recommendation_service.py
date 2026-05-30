@@ -52,7 +52,7 @@ def _call_llm(config: Config, prompt: str) -> str:
     kwargs: Dict[str, Any] = {
         "model": config.llm_model,
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 128,
+        "max_tokens": 160,
         "timeout": min(config.openai_timeout, 60),
     }
     if config.llm_api_key:
@@ -131,19 +131,35 @@ def get_recommendation(
     if not tavily_api_key or not current_feed_titles:
         return None
 
-    # ── Step 1: infer taste + search query (LLM call 1) ─────────────────────
-    # We pass the podcast list only to this private call; Tavily never sees names.
+    # ── Step 1: derive taste profile + search query (LLM call 1) ───────────
+    # Dismissed titles are passed here so the model can pick an angle that
+    # hasn't already been explored and avoid retreading the same ground.
     titles_block = "\n".join(f"- {t}" for t in current_feed_titles)
+    dismissed_block = (
+        "\n".join(f"- {t}" for t in dismissed_titles) if dismissed_titles else "None"
+    )
     profile_prompt = (
-        "You are a podcast analyst.\n"
-        f"A listener subscribes to:\n{titles_block}\n\n"
-        "Reply ONLY as JSON with two keys:\n"
-        '  "taste": a 10-20 word description of their listening interests '
-        "(themes, tone, subject matter — no show names),\n"
-        '  "search_query": a 4-8 word search query for finding similar podcasts '
-        "(themes only, no show names).\n"
-        'Example: {"taste": "thoughtful science and technology interviews with '
-        'long-form depth", "search_query": "in-depth science technology interview podcasts"}'
+        "You are a podcast recommendation analyst.\n\n"
+        f"The listener subscribes to:\n{titles_block}\n\n"
+        f"They have already dismissed these recommendations:\n{dismissed_block}\n\n"
+        "Generate a targeted web search query to find them a NEW podcast they haven't tried.\n\n"
+        "Rules for the search query (5-10 words):\n"
+        "- Focus on specific themes, tone, genre, or style.\n"
+        "- You MAY include one well-known show name as a reference point when it "
+        "meaningfully sharpens the query (e.g. 'comedy fact podcasts similar to "
+        "No Such Thing as a Fish'). Only do this when it genuinely helps.\n"
+        "- Vary your approach — do not always use the same pattern. Sometimes "
+        "lead with genre, sometimes mood, sometimes topic.\n"
+        "- Use the dismissed list to explore a different angle from what was "
+        "already tried.\n\n"
+        "Also write a concise taste description (10-20 words) covering the key "
+        "themes and tone — used internally, not for search.\n\n"
+        'Reply ONLY as JSON: {"taste": "...", "search_query": "..."}\n'
+        "Examples of good search queries:\n"
+        '  "comedy fact podcasts similar to No Such Thing as a Fish"\n'
+        '  "narrative investigative journalism true crime"\n'
+        '  "bite-sized daily news briefing podcasts"\n'
+        '  "long-form philosophy and ethics conversations"'
     )
 
     try:
@@ -157,6 +173,8 @@ def get_recommendation(
     if not taste or not search_query:
         return None
 
+    logger.info("Recommendation search query: %r | taste: %r", search_query, taste)
+
     # ── Step 2: Tavily search ────────────────────────────────────────────────
     try:
         snippets = _tavily_search(tavily_api_key, search_query)
@@ -168,19 +186,16 @@ def get_recommendation(
         return None
 
     # ── Step 3: pick from results (LLM call 2) ──────────────────────────────
-    dismissed_block = (
-        "\n".join(f"- {t}" for t in dismissed_titles) if dismissed_titles else "None"
-    )
     already_has_block = "\n".join(f"- {t}" for t in current_feed_titles)
 
     pick_prompt = (
-        f"The listener's taste: {taste}\n"
-        f"They already have:\n{already_has_block}\n"
-        f"Previously dismissed:\n{dismissed_block}\n\n"
+        f"Listener taste: {taste}\n\n"
+        f"Already subscribed to:\n{already_has_block}\n\n"
+        f"Previously dismissed (do not suggest these):\n{dismissed_block}\n\n"
         f"Podcast search results:\n{snippets}\n\n"
-        "Recommend ONE podcast from the results that fits their taste, "
-        "is not already in their list, and has not been dismissed.\n"
-        'Reply ONLY as JSON: {"podcast_name": "exact name", '
+        "Pick ONE podcast from the results that best fits the listener's taste, "
+        "is not already subscribed, and has not been dismissed.\n"
+        'Reply ONLY as JSON: {"podcast_name": "exact name as it appears in the results", '
         '"reason": "one sentence personalised to their taste"}'
     )
 
