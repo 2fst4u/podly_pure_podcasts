@@ -164,10 +164,10 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
   );
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Podcast Feed</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-4 sm:p-6">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Add New Podcast Feed</h3>
       {planLimitReached && (
-        <div className="mb-3 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+        <div className="mb-3 text-sm text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md px-3 py-2">
           Your plan is full. Increase your feed allowance to add more.
         </div>
       )}
@@ -180,8 +180,8 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
           }}
           className={`flex-1 px-3 py-2 rounded-md border transition-colors ${
             activeMode === 'url'
-              ? 'bg-blue-50 border-blue-500 text-blue-700'
-              : 'border-gray-200 text-gray-600 hover:bg-gray-100'
+              ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
+              : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
           Enter RSS URL
@@ -195,8 +195,8 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
           }}
           className={`flex-1 px-3 py-2 rounded-md border ${
             activeMode === 'search'
-              ? 'bg-blue-50 border-blue-500 text-blue-700'
-              : 'border-gray-200 text-gray-600 hover:bg-gray-100'
+              ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300'
+              : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
           Search Podcasts
@@ -206,7 +206,7 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
       {activeMode === 'url' && (
         <form onSubmit={handleSubmitManual} className="space-y-4">
           <div>
-            <label htmlFor="feed-url" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="feed-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               RSS Feed URL
             </label>
             <input
@@ -215,17 +215,17 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com/podcast/feed.xml"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
               disabled={!!planLimitReached}
             />
           </div>
 
       {error && (
-        <div className="text-red-600 text-sm">{error}</div>
+        <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>
       )}
       {upgradePrompt && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-amber-200 bg-amber-50 rounded-md text-sm text-amber-800">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 rounded-md text-sm text-amber-800 dark:text-amber-300">
           <span>{upgradePrompt}</span>
           {onUpgradePlan && (
             <button
@@ -255,7 +255,7 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
         <div className="space-y-4">
           <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
             <div className="flex-1">
-              <label htmlFor="search-term" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="search-term" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Search keyword
               </label>
               <input
@@ -264,7 +264,7 @@ export default function AddFeedForm({ onSuccess, onUpgradePlan, planLimitReached
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="e.g. history, space, entrepreneurship"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={!!planLimitReached}
               />
             </div>

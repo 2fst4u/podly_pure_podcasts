@@ -79,18 +79,18 @@ export default function DefaultTab() {
       </Section>
 
       <Section title="Quick Setup">
-        <div className="text-sm text-gray-700 mb-2 flex items-center gap-2 flex-wrap">
+        <div className="text-sm text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2 flex-wrap">
           <span>Enter your Groq API key to use the recommended setup.</span>
           <button
             type="button"
-            className="text-indigo-600 hover:underline"
+            className="text-indigo-600 dark:text-indigo-400 hover:underline"
             onClick={() => setShowGroqHelp((v) => !v)}
           >
             {showGroqHelp ? 'Hide help' : '(need help getting a key?)'}
           </button>
           <button
             type="button"
-            className="text-indigo-600 hover:underline"
+            className="text-indigo-600 dark:text-indigo-400 hover:underline"
             onClick={() => setShowGroqPricing((v) => !v)}
           >
             {showGroqPricing ? 'Hide pricing' : '(pricing guide)'}
@@ -119,19 +119,19 @@ export default function DefaultTab() {
       </Section>
 
       {/* Input styling */}
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </div>
   );
 }
 
 function GroqHelpBox() {
   return (
-    <div className="text-sm text-gray-700 mb-2 bg-indigo-50 border border-indigo-200 rounded p-3 space-y-2">
+    <div className="text-sm text-gray-700 dark:text-gray-300 mb-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded p-3 space-y-2">
       <ol className="list-decimal pl-5 space-y-1">
         <li>
           Visit the{' '}
           <a
-            className="text-indigo-700 underline"
+            className="text-indigo-700 dark:text-indigo-300 underline"
             href="https://console.groq.com/keys"
             target="_blank"
             rel="noreferrer"
@@ -147,7 +147,7 @@ function GroqHelpBox() {
         <li>
           <strong>Recommended:</strong> Set a billing limit at{' '}
           <a
-            className="text-indigo-700 underline"
+            className="text-indigo-700 dark:text-indigo-300 underline"
             href="https://console.groq.com/settings/billing"
             target="_blank"
             rel="noreferrer"
@@ -163,19 +163,19 @@ function GroqHelpBox() {
 
 function GroqPricingBox() {
   return (
-    <div className="text-sm text-gray-700 mb-2 bg-green-50 border border-green-200 rounded p-3 space-y-3">
+    <div className="text-sm text-gray-700 dark:text-gray-300 mb-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded p-3 space-y-3">
       <div>
-        <h4 className="font-semibold text-green-800 mb-2">Groq Pricing Guide</h4>
-        <p className="text-green-700 mb-3">
+        <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2">Groq Pricing Guide</h4>
+        <p className="text-green-700 dark:text-green-300 mb-3">
           Based on the recommended models: <code>whisper-large-v3-turbo</code> and{' '}
           <code>llama-3.3-70b-versatile</code>
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-green-300 rounded p-3">
-          <h5 className="font-medium text-green-800 mb-2">Whisper (Transcription)</h5>
-          <ul className="space-y-1 text-green-700">
+        <div className="bg-white dark:bg-gray-800 border border-green-300 dark:border-green-800 rounded p-3">
+          <h5 className="font-medium text-green-800 dark:text-green-300 mb-2">Whisper (Transcription)</h5>
+          <ul className="space-y-1 text-green-700 dark:text-green-300">
             <li>
               • <strong>whisper-large-v3-turbo:</strong> $0.04/hour
             </li>
@@ -184,9 +184,9 @@ function GroqPricingBox() {
           </ul>
         </div>
 
-        <div className="bg-white border border-green-300 rounded p-3">
-          <h5 className="font-medium text-green-800 mb-2">LLM (Ad Detection)</h5>
-          <ul className="space-y-1 text-green-700">
+        <div className="bg-white dark:bg-gray-800 border border-green-300 dark:border-green-800 rounded p-3">
+          <h5 className="font-medium text-green-800 dark:text-green-300 mb-2">LLM (Ad Detection)</h5>
+          <ul className="space-y-1 text-green-700 dark:text-green-300">
             <li>
               • <strong>llama-3.3-70b-versatile:</strong>
             </li>
@@ -197,11 +197,11 @@ function GroqPricingBox() {
         </div>
       </div>
 
-      <div className="bg-white border border-green-300 rounded p-3">
-        <h5 className="font-medium text-green-800 mb-2">
+      <div className="bg-white dark:bg-gray-800 border border-green-300 dark:border-green-800 rounded p-3">
+        <h5 className="font-medium text-green-800 dark:text-green-300 mb-2">
           Estimated Monthly Cost (6 podcasts, 6 hours/week)
         </h5>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-green-700">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-green-700 dark:text-green-300">
           <div>
             <strong>Transcription:</strong>
             <br />
@@ -218,7 +218,7 @@ function GroqPricingBox() {
             <span className="font-semibold text-lg">~$2.34/month</span>
           </div>
         </div>
-        <p className="text-xs text-green-600 mt-2">
+        <p className="text-xs text-green-600 dark:text-green-400 mt-2">
           * Actual costs may vary based on podcast length, complexity, and token usage. Consider
           setting a $5-10/month billing limit for safety.
         </p>

@@ -121,7 +121,12 @@ def _load_session_user() -> AuthenticatedUser | None:
         session.pop(SESSION_USER_KEY, None)
         return None
 
-    return AuthenticatedUser(id=user.id, username=user.username, role=user.role)
+    return AuthenticatedUser(
+        id=user.id,
+        username=user.username,
+        role=user.role,
+        dark_mode=user.dark_mode,
+    )
 
 
 def _is_token_protected_endpoint(path: str) -> bool:

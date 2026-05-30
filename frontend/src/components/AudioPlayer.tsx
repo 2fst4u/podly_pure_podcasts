@@ -155,10 +155,10 @@ export default function AudioPlayer() {
   const shouldShowError = error && error !== dismissedError;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4 py-3">
         {shouldShowError && (
-          <div className="mb-2 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-sm flex items-center justify-between">
+          <div className="mb-2 p-2 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 rounded text-red-700 dark:text-red-300 text-sm flex items-center justify-between">
             <span>{error}</span>
             <button
               onClick={dismissError}
@@ -174,14 +174,14 @@ export default function AudioPlayer() {
           {/* Episode Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
-                <span className="text-gray-500 text-xs">🎵</span>
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded flex-shrink-0 flex items-center justify-center">
+                <span className="text-gray-500 dark:text-gray-400 text-xs">🎵</span>
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-sm font-medium text-gray-900 truncate">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {currentEpisode.title}
                 </h4>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   Episode • {formatTime(duration)}
                 </p>
               </div>
@@ -199,7 +199,7 @@ export default function AudioPlayer() {
               <button
                 onClick={togglePlayPause}
                 disabled={isLoading}
-                className="p-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                className="p-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-full hover:bg-gray-800 dark:hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 dark:focus-visible:ring-gray-100 focus-visible:ring-offset-2"
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
                 {isLoading ? (
@@ -225,11 +225,11 @@ export default function AudioPlayer() {
             </div>
 
             {/* Progress Bar */}
-            <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
               <span className="w-10 text-right">{formatTime(displayTime)}</span>
               <div
                 ref={progressBarRef}
-                className="flex-1 h-1 bg-gray-200 rounded-full cursor-pointer relative group audio-player-progress focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                className="flex-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer relative group audio-player-progress focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 dark:focus-visible:ring-gray-100 focus-visible:ring-offset-2"
                 role="slider"
                 tabIndex={0}
                 aria-label="Seek time"
@@ -254,10 +254,10 @@ export default function AudioPlayer() {
                 onClick={handleProgressClick}
               >
                 <div
-                  className="h-full bg-gray-900 rounded-full relative"
+                  className="h-full bg-gray-900 dark:bg-gray-100 rounded-full relative"
                   style={{ width: `${progressPercentage}%` }}
                 >
-                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-gray-900 rounded-full audio-player-progress-thumb" />
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-gray-900 dark:bg-gray-100 rounded-full audio-player-progress-thumb" />
                 </div>
               </div>
               <span className="w-10">{formatTime(duration)}</span>
@@ -269,7 +269,7 @@ export default function AudioPlayer() {
             <button
               onClick={toggleMute}
               onMouseEnter={() => setShowVolumeSlider(true)}
-              className="p-1 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 rounded"
+              className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 dark:focus-visible:ring-gray-100 rounded"
               aria-label={volume === 0 ? "Unmute" : "Mute"}
             >
               {volume === 0 ? (
@@ -282,11 +282,11 @@ export default function AudioPlayer() {
             {showVolumeSlider && (
               <div
                 ref={volumeSliderRef}
-                className="absolute bottom-full right-0 mb-2 p-2 bg-white border border-gray-200 rounded shadow-lg audio-player-volume-slider"
+                className="absolute bottom-full right-0 mb-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg audio-player-volume-slider"
                 onMouseEnter={() => setShowVolumeSlider(true)}
               >
                 <div
-                  className="w-20 h-1 bg-gray-200 rounded-full cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                  className="w-20 h-1 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 dark:focus-visible:ring-gray-100 focus-visible:ring-offset-2"
                   onClick={handleVolumeChange}
                   role="slider"
                   tabIndex={0}
@@ -306,10 +306,10 @@ export default function AudioPlayer() {
                   }}
                 >
                   <div
-                    className="h-full bg-gray-900 rounded-full relative"
+                    className="h-full bg-gray-900 dark:bg-gray-100 rounded-full relative"
                     style={{ width: `${volume * 100}%` }}
                   >
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-gray-900 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-gray-900 dark:bg-gray-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
               </div>

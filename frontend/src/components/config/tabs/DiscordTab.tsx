@@ -70,11 +70,11 @@ export default function DiscordTab() {
   const envOverrides = data?.env_overrides || {};
 
   if (isLoading) {
-    return <div className="text-sm text-gray-600">Loading Discord configuration...</div>;
+    return <div className="text-sm text-gray-600 dark:text-gray-400">Loading Discord configuration...</div>;
   }
 
   if (error) {
-    return <div className="text-sm text-red-600">Failed to load Discord configuration</div>;
+    return <div className="text-sm text-red-600 dark:text-red-400">Failed to load Discord configuration</div>;
   }
 
   return (
@@ -84,10 +84,10 @@ export default function DiscordTab() {
         
         <form onSubmit={handleSubmit} className="mt-6 space-y-4 max-w-xl">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Client ID
               {envOverrides.client_id && (
-                <span className="ml-2 text-xs text-amber-600">
+                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">
                   (Overridden by {envOverrides.client_id.env_var})
                 </span>
               )}
@@ -103,14 +103,14 @@ export default function DiscordTab() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Client Secret
               {envOverrides.client_secret ? (
-                <span className="ml-2 text-xs text-amber-600">
+                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">
                   (Overridden by {envOverrides.client_secret.env_var})
                 </span>
               ) : data?.config.client_secret_preview ? (
-                <span className="ml-2 text-xs text-gray-500">
+                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                   (Current: {data.config.client_secret_preview})
                 </span>
               ) : null}
@@ -129,10 +129,10 @@ export default function DiscordTab() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Redirect URI
               {envOverrides.redirect_uri && (
-                <span className="ml-2 text-xs text-amber-600">
+                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">
                   (Overridden by {envOverrides.redirect_uri.env_var})
                 </span>
               )}
@@ -145,16 +145,16 @@ export default function DiscordTab() {
               placeholder="https://your-domain.com/api/auth/discord/callback"
               disabled={!!envOverrides.redirect_uri}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Must match the URI configured in Discord Developer Portal
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Guild IDs (optional)
               {envOverrides.guild_ids && (
-                <span className="ml-2 text-xs text-amber-600">
+                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">
                   (Overridden by {envOverrides.guild_ids.env_var})
                 </span>
               )}
@@ -167,7 +167,7 @@ export default function DiscordTab() {
               placeholder="123456789,987654321"
               disabled={!!envOverrides.guild_ids}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Comma-separated Discord server IDs to restrict access
             </p>
           </div>
@@ -179,14 +179,14 @@ export default function DiscordTab() {
                 checked={form.allow_registration}
                 onChange={(e) => setForm({ ...form, allow_registration: e.target.checked })}
                 disabled={!!envOverrides.allow_registration}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-700 text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700 dark:text-gray-300">
                 Allow new users to register via Discord
               </span>
             </label>
             {envOverrides.allow_registration && (
-              <p className="text-xs text-amber-600 mt-1 ml-6">
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 ml-6">
                 Overridden by {envOverrides.allow_registration.env_var}
               </p>
             )}
@@ -208,7 +208,7 @@ export default function DiscordTab() {
         <SetupInstructions />
       </Section>
       
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </div>
   );
 }
@@ -218,10 +218,10 @@ function StatusIndicator({ enabled }: { enabled: boolean }) {
     <div className="flex items-center gap-3">
       <div
         className={`w-3 h-3 rounded-full ${
-          enabled ? 'bg-green-500' : 'bg-gray-300'
+          enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
         }`}
       />
-      <span className="text-sm font-medium text-gray-900">
+      <span className="text-sm font-medium text-gray-900 dark:text-white">
         {enabled ? 'Discord SSO is enabled' : 'Discord SSO is not configured'}
       </span>
     </div>
@@ -230,18 +230,18 @@ function StatusIndicator({ enabled }: { enabled: boolean }) {
 
 function SetupInstructions() {
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4">
-      <h4 className="text-sm font-medium text-gray-900">
+    <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
+      <h4 className="text-sm font-medium text-gray-900 dark:text-white">
         Discord Developer Portal Setup
       </h4>
-      <ol className="text-sm text-gray-600 list-decimal list-inside space-y-2">
+      <ol className="text-sm text-gray-600 dark:text-gray-400 list-decimal list-inside space-y-2">
         <li>
           Go to{' '}
           <a
             href="https://discord.com/developers/applications"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-indigo-600 hover:text-indigo-800 underline"
+            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 underline"
           >
             Discord Developer Portal
           </a>
@@ -250,11 +250,11 @@ function SetupInstructions() {
         <li>Navigate to <strong>OAuth2 → General</strong></li>
         <li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></li>
         <li>Add your redirect URI to the list of allowed redirects</li>
-        <li>The redirect URI should be: <code className="bg-gray-100 px-1 rounded text-xs">https://your-domain/api/auth/discord/callback</code></li>
+        <li>The redirect URI should be: <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded text-xs">https://your-domain/api/auth/discord/callback</code></li>
       </ol>
       
-      <div className="pt-2 border-t border-gray-200">
-        <p className="text-xs text-gray-500">
+      <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           <strong>Note:</strong> Environment variables (DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, etc.) 
           take precedence over values configured here.
         </p>

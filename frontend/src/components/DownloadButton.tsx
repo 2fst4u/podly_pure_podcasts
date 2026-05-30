@@ -119,7 +119,7 @@ export default function DownloadButton({
           />
         </div>
         {error && (
-          <div className="text-xs text-red-600 mt-1">
+          <div className="text-xs text-red-600 dark:text-red-400 mt-1">
             {error}
           </div>
         )}
@@ -141,7 +141,7 @@ export default function DownloadButton({
     <div className={`space-y-2 ${className}`}>
       <button
         onClick={handleDownloadClick}
-        className="px-3 py-1 text-xs rounded font-medium transition-colors border bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
+        className="px-3 py-1 text-xs rounded font-medium transition-colors border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white"
         title="Start processing episode"
       >
         Process
@@ -149,7 +149,7 @@ export default function DownloadButton({
 
       {/* Error message */}
       {error && (
-        <div className="text-xs text-red-600 text-center">
+        <div className="text-xs text-red-600 dark:text-red-400 text-center">
           {error}
         </div>
       )}

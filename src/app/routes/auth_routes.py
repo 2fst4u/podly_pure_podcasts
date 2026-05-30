@@ -26,6 +26,7 @@ from app.auth.state import failure_rate_limiter
 from app.extensions import db
 from app.models import User
 from app.runtime_config import config as runtime_config
+from app.writer.client import writer_client
 
 logger = logging.getLogger("global_logger")
 
@@ -99,6 +100,7 @@ def login() -> RouteResult:
                 "id": authenticated.id,
                 "username": authenticated.username,
                 "role": authenticated.role,
+                "dark_mode": authenticated.dark_mode,
                 "feed_allowance": allowance,
                 "feed_subscription_status": getattr(
                     authenticated, "feed_subscription_status", "inactive"
@@ -141,6 +143,7 @@ def auth_me() -> RouteResult:
                 "id": user.id,
                 "username": user.username,
                 "role": user.role,
+                "dark_mode": user.dark_mode,
                 "feed_allowance": allowance,
                 "feed_subscription_status": getattr(
                     user, "feed_subscription_status", "inactive"
@@ -202,6 +205,7 @@ def list_users_route() -> RouteResult:
                     "id": u.id,
                     "username": u.username,
                     "role": u.role,
+                    "dark_mode": u.dark_mode,
                     "created_at": u.created_at.isoformat(),
                     "updated_at": u.updated_at.isoformat(),
                     "last_active": u.last_active.isoformat() if u.last_active else None,
@@ -318,6 +322,30 @@ def delete_user_route(username: str) -> RouteResult:
         return jsonify({"error": str(exc)}), 400
 
     return jsonify({"status": "ok"})
+
+
+@auth_bp.route("/api/auth/settings", methods=["PATCH"])
+def update_settings_route() -> RouteResult:
+    if not _auth_enabled():
+        return jsonify({"error": "Authentication is disabled."}), 404
+
+    user = _require_authenticated_user()
+    if user is None:
+        return _unauthorized_response()
+
+    payload = request.get_json(silent=True) or {}
+    params = {"user_id": user.id}
+    if "dark_mode" in payload:
+        params["dark_mode"] = payload["dark_mode"]
+
+    result = writer_client.action("update_user_settings", params, wait=True)
+    if not result or not result.success or not isinstance(result.data, dict):
+        return (
+            jsonify({"error": getattr(result, "error", "Failed to update settings")}),
+            500,
+        )
+
+    return jsonify({"status": "ok", "dark_mode": result.data.get("dark_mode")})
 
 
 def _require_authenticated_user() -> User | None:

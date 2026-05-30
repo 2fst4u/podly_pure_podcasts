@@ -160,6 +160,8 @@ class User(db.Model):  # type: ignore[name-defined, misc]
     # Admin override for feed allowance (if set, overrides plan-based allowance)
     manual_feed_allowance = db.Column(db.Integer, nullable=True)
 
+    dark_mode = db.Column(db.Boolean, default=False, nullable=False)
+
     user_feeds = db.relationship(
         "UserFeed",
         back_populates="user",
