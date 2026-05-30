@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { recommendationsApi } from '../services/api';
 import { toast } from 'react-hot-toast';
@@ -17,6 +18,7 @@ interface Props {
 
 export default function RecommendationCard({ onSubscribed }: Props) {
   const queryClient = useQueryClient();
+  const [reasonExpanded, setReasonExpanded] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['recommendation'],
@@ -92,9 +94,17 @@ export default function RecommendationCard({ onSubscribed }: Props) {
           {rec.author && (
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{rec.author}</p>
           )}
-          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1.5 italic leading-relaxed line-clamp-2">
+          <p className={`text-xs text-blue-700 dark:text-blue-300 mt-1.5 italic leading-relaxed${reasonExpanded ? '' : ' line-clamp-2'}`}>
             "{rec.reason}"
           </p>
+          {rec.reason.length > 120 && (
+            <button
+              onClick={() => setReasonExpanded((v) => !v)}
+              className="text-xs text-blue-500 dark:text-blue-400 hover:underline mt-0.5"
+            >
+              {reasonExpanded ? 'Show less' : 'Show more'}
+            </button>
+          )}
         </div>
       </div>
 
