@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useConfigContext } from '../ConfigContext';
 import { Section, Field, SaveButton } from '../shared';
 
 export default function AppSection() {
   const { pending, setField, handleSave, isSaving } = useConfigContext();
+  const [tavilyKeyInput, setTavilyKeyInput] = useState('');
 
   if (!pending) return null;
 
@@ -79,6 +81,34 @@ export default function AppSection() {
             </label>
           </div>
         </div>
+      </Section>
+
+      <Section title="Podcast Recommendations">
+        <Field label="Tavily API Key (enables AI-powered podcast recommendations)">
+          <input
+            className="input"
+            type="password"
+            placeholder={pending?.app?.tavily_api_key_preview ?? 'Enter Tavily API key…'}
+            value={tavilyKeyInput}
+            onChange={(e) => {
+              setTavilyKeyInput(e.target.value);
+              setField(['app', 'tavily_api_key'], e.target.value || null);
+            }}
+            autoComplete="off"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Get a free key at{' '}
+            <a
+              href="https://tavily.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              tavily.com
+            </a>
+            . Can also be set via the <code>TAVILY_API_KEY</code> environment variable.
+          </p>
+        </Field>
       </Section>
 
       <SaveButton onSave={handleSave} isPending={isSaving} />

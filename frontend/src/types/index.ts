@@ -150,6 +150,7 @@ export interface AppConfigUI {
   enable_public_landing_page: boolean;
   user_limit_total: number | null;
   autoprocess_on_download: boolean;
+  tavily_api_key_preview?: string | null;
 }
 
 export interface CombinedConfig {

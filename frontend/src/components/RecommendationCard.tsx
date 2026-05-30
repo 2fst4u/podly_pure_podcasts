@@ -21,7 +21,8 @@ export default function RecommendationCard({ onSubscribed }: Props) {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['recommendation'],
     queryFn: recommendationsApi.getRecommendation,
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
+    gcTime: Infinity,
     retry: false,
   });
 

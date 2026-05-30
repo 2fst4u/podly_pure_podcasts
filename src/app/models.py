@@ -509,6 +509,8 @@ class AppSettings(db.Model):  # type: ignore[name-defined, misc]
         default=DEFAULTS.APP_AUTOPROCESS_ON_DOWNLOAD,
     )
 
+    tavily_api_key = db.Column(db.Text, nullable=True)
+
     # Hash of the environment variables used to seed configuration.
     # Used to detect changes in environment variables between restarts.
     env_config_hash = db.Column(db.String(64), nullable=True)

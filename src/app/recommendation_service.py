@@ -1,18 +1,19 @@
 """
 Podcast recommendation service.
 
-Uses a two-step LLM pipeline:
-  1. Ask the LLM to generate search terms based on the user's podcasts.
-  2. Query the podcast search API, then ask the LLM to pick the best match.
+Uses a three-step pipeline:
+  1. Tavily web search for podcast recommendations relevant to the user's shows.
+  2. One LLM call to pick the best podcast from the search results.
+  3. iTunes/Podcast Index lookup to find the RSS URL and artwork for that podcast.
 
-This gives the model effective access to a live podcast catalog without
-requiring a separate web-search API key.
+Requires a configured Tavily API key; returns None when the key is absent.
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from typing import Any, Dict, List, Optional
 
 import litellm
@@ -32,11 +33,25 @@ _SEARCH_HEADERS = {
 }
 
 
+def _get_tavily_api_key() -> Optional[str]:
+    """Read Tavily key from env var first, then DB."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if key:
+        return key
+    try:
+        from app.models import AppSettings  # pylint: disable=import-outside-toplevel
+
+        row = AppSettings.query.get(1)
+        return getattr(row, "tavily_api_key", None) if row else None
+    except Exception:  # pylint: disable=broad-except
+        return None
+
+
 def _call_llm(config: Config, messages: List[Dict[str, str]]) -> str:
     kwargs: Dict[str, Any] = {
         "model": config.llm_model,
         "messages": messages,
-        "max_tokens": 512,
+        "max_tokens": 256,
         "timeout": min(config.openai_timeout, 60),
     }
     if config.llm_api_key:
@@ -52,38 +67,50 @@ def _call_llm(config: Config, messages: List[Dict[str, str]]) -> str:
     return content.strip()
 
 
-def _search_podcasts(term: str) -> List[Dict[str, Any]]:
+def _tavily_search(api_key: str, query: str) -> str:
+    """Run a basic Tavily search and return concatenated snippets."""
+    from tavily import TavilyClient  # pylint: disable=import-outside-toplevel
+
+    client = TavilyClient(api_key=api_key)
+    results = client.search(query=query, search_depth="basic", max_results=5)
+    snippets = []
+    for r in results.get("results", []):
+        title = r.get("title", "")
+        content = r.get("content", "")
+        if content:
+            snippets.append(f"[{title}] {content}")
+    return "\n\n".join(snippets)
+
+
+def _itunes_lookup(podcast_name: str) -> Optional[Dict[str, Any]]:
+    """Search iTunes/Podcast Index for an RSS feed URL by name."""
     try:
         resp = requests.get(
             _SEARCH_URL,
             headers=_SEARCH_HEADERS,
-            params={"term": term},
+            params={"term": podcast_name},
             timeout=10,
         )
         resp.raise_for_status()
         data = resp.json()
     except Exception as exc:  # pylint: disable=broad-except
-        logger.warning("Podcast search failed for %r: %s", term, exc)
-        return []
+        logger.warning("iTunes lookup failed for %r: %s", podcast_name, exc)
+        return None
 
-    results = []
-    for item in (data.get("results") or [])[:5]:
+    for item in data.get("results") or []:
         feed_url = item.get("feedUrl")
         if not feed_url:
             continue
-        results.append(
-            {
-                "title": item.get("collectionName") or item.get("trackName") or "",
-                "author": item.get("artistName") or "",
-                "description": item.get("collectionCensoredName") or "",
-                "feedUrl": feed_url,
-                "artworkUrl": item.get("artworkUrl100")
-                or item.get("artworkUrl600")
-                or "",
-                "genres": item.get("genres") or [],
-            }
-        )
-    return results
+        return {
+            "title": item.get("collectionName")
+            or item.get("trackName")
+            or podcast_name,
+            "author": item.get("artistName") or "",
+            "description": item.get("collectionCensoredName") or "",
+            "rss_url": feed_url,
+            "artwork_url": item.get("artworkUrl100") or item.get("artworkUrl600") or "",
+        }
+    return None
 
 
 def get_recommendation(
@@ -92,96 +119,62 @@ def get_recommendation(
     dismissed_titles: List[str],
 ) -> Optional[Dict[str, Any]]:
     """
-    Returns a dict with keys: title, author, description, rss_url, artwork_url, reason.
-    Returns None if no suitable recommendation can be generated.
+    Return a recommendation dict with keys: title, author, description,
+    rss_url, artwork_url, reason. Returns None if Tavily is not configured
+    or no suitable recommendation can be found.
     """
-    if not current_feed_titles:
+    tavily_api_key = _get_tavily_api_key()
+    if not tavily_api_key or not current_feed_titles:
         return None
 
-    feeds_summary = "\n".join(f"- {t}" for t in current_feed_titles)
-    dismissed_summary = (
+    # Build a search query from the user's podcast titles (no LLM call needed)
+    sample_titles = current_feed_titles[:3]
+    titles_str = ", ".join(f'"{t}"' for t in sample_titles)
+    query = f"best podcast recommendations for listeners of {titles_str}"
+
+    # Step 1: Tavily search
+    try:
+        snippets = _tavily_search(tavily_api_key, query)
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.warning("Tavily search failed: %s", exc)
+        return None
+
+    if not snippets:
+        return None
+
+    # Step 2: ONE LLM call — pick the best podcast from search results
+    already_has = "\n".join(f"- {t}" for t in current_feed_titles)
+    dismissed = (
         "\n".join(f"- {t}" for t in dismissed_titles) if dismissed_titles else "None"
     )
 
-    # Step 1: ask the LLM for 2-3 search terms
-    step1_prompt = (
-        "You are a podcast recommendation assistant.\n"
-        "The user currently listens to these podcasts:\n"
-        f"{feeds_summary}\n\n"
-        "Generate 2 short search queries (2-4 words each) to find NEW podcasts they would enjoy. "
-        "These queries will be sent to a podcast search engine.\n"
-        'Reply with ONLY a JSON array of strings, e.g. ["true crime stories", "history mysteries"].'
+    prompt = (
+        f"The user already listens to:\n{already_has}\n\n"
+        f"Previously dismissed recommendations:\n{dismissed}\n\n"
+        f"Web search results about podcast recommendations:\n{snippets}\n\n"
+        "Recommend ONE specific podcast NOT in the user's list and NOT dismissed.\n"
+        'Reply ONLY as JSON: {"podcast_name": "exact name", '
+        '"reason": "one sentence why they will enjoy it"}'
     )
+
     try:
-        step1_raw = _call_llm(config, [{"role": "user", "content": step1_prompt}])
-        # Extract JSON array from the response
-        start = step1_raw.find("[")
-        end = step1_raw.rfind("]") + 1
-        search_terms: List[str] = json.loads(step1_raw[start:end]) if start >= 0 else []
+        raw = _call_llm(config, [{"role": "user", "content": prompt}])
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        choice: Dict[str, Any] = json.loads(raw[start:end]) if start >= 0 else {}
     except Exception as exc:  # pylint: disable=broad-except
-        logger.warning("Step 1 LLM call failed: %s", exc)
+        logger.warning("LLM recommendation call failed: %s", exc)
         return None
 
-    if not search_terms:
+    podcast_name = (choice.get("podcast_name") or "").strip()
+    reason = (choice.get("reason") or "").strip()
+    if not podcast_name:
         return None
 
-    # Step 2: search for podcasts using the generated terms
-    candidates: List[Dict[str, Any]] = []
-    seen_titles: set[str] = set(
-        t.lower() for t in current_feed_titles + dismissed_titles
-    )
-    for term in search_terms[:2]:
-        for result in _search_podcasts(term):
-            if result["title"].lower() not in seen_titles:
-                candidates.append(result)
-                seen_titles.add(result["title"].lower())
-
-    if not candidates:
+    # Step 3: iTunes/Podcast Index lookup to get the RSS URL and artwork
+    match = _itunes_lookup(podcast_name)
+    if not match:
         return None
 
-    # Deduplicate and cap
-    candidates = candidates[:12]
-
-    candidates_text = "\n".join(
-        f"{i+1}. \"{c['title']}\" by {c['author']} — {c['description'] or c['genres']}"
-        for i, c in enumerate(candidates)
-    )
-
-    # Step 3: ask the LLM to pick the best one
-    step2_prompt = (
-        "You are a podcast recommendation assistant.\n"
-        "The user currently listens to:\n"
-        f"{feeds_summary}\n\n"
-        "Previously dismissed recommendations (do not suggest these):\n"
-        f"{dismissed_summary}\n\n"
-        "From the following search results, pick the single BEST new podcast for this user "
-        "that they don't already have and haven't dismissed:\n"
-        f"{candidates_text}\n\n"
-        "Reply with ONLY a JSON object with these keys:\n"
-        '  "index": <1-based index of chosen podcast>,\n'
-        '  "reason": <one sentence explaining why they would enjoy it>\n'
-        'Example: {"index": 3, "reason": "You enjoy history, and this dives deep into forgotten empires."}'
-    )
-    try:
-        step2_raw = _call_llm(config, [{"role": "user", "content": step2_prompt}])
-        start = step2_raw.find("{")
-        end = step2_raw.rfind("}") + 1
-        choice: Dict[str, Any] = json.loads(step2_raw[start:end]) if start >= 0 else {}
-    except Exception as exc:  # pylint: disable=broad-except
-        logger.warning("Step 2 LLM call failed: %s", exc)
-        return None
-
-    idx = choice.get("index")
-    reason = choice.get("reason", "")
-    if not isinstance(idx, int) or idx < 1 or idx > len(candidates):
-        return None
-
-    picked = candidates[idx - 1]
-    return {
-        "title": picked["title"],
-        "author": picked["author"],
-        "description": picked["description"],
-        "rss_url": picked["feedUrl"],
-        "artwork_url": picked["artworkUrl"],
-        "reason": reason,
-    }
+    match["reason"] = reason
+    return match

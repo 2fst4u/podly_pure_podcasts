@@ -1,7 +1,7 @@
-"""add dismissed_recommendation table
+"""add dismissed_recommendation table and tavily_api_key to app_settings
 
 Revision ID: a1b2c3d4e5f6
-Revises: e1325294473b
+Revises: f7a4195e0953
 Create Date: 2026-05-30 00:00:00.000000
 
 """
@@ -32,9 +32,13 @@ def upgrade():
         "dismissed_recommendation",
         ["user_id"],
     )
+    with op.batch_alter_table("app_settings", schema=None) as batch_op:
+        batch_op.add_column(sa.Column("tavily_api_key", sa.Text(), nullable=True))
 
 
 def downgrade():
+    with op.batch_alter_table("app_settings", schema=None) as batch_op:
+        batch_op.drop_column("tavily_api_key")
     op.drop_index(
         "ix_dismissed_recommendation_user_id",
         table_name="dismissed_recommendation",
