@@ -606,6 +606,29 @@ export const billingApi = {
   },
 };
 
+export const recommendationsApi = {
+  getRecommendation: async (): Promise<{
+    recommendation: {
+      title: string;
+      author: string;
+      description: string;
+      rss_url: string;
+      artwork_url: string;
+      reason: string;
+    } | null;
+  }> => {
+    const response = await api.get('/api/recommendations');
+    return response.data;
+  },
+
+  dismissRecommendation: async (podcastTitle: string, podcastRssUrl?: string): Promise<void> => {
+    await api.post('/api/recommendations/dismiss', {
+      podcast_title: podcastTitle,
+      podcast_rss_url: podcastRssUrl,
+    });
+  },
+};
+
 export const jobsApi = {
   getActiveJobs: async (limit: number = 100): Promise<Job[]> => {
     const response = await api.get('/api/jobs/active', { params: { limit } });

@@ -4,6 +4,7 @@ import { feedsApi, configApi, billingApi } from '../services/api';
 import FeedList from '../components/FeedList';
 import FeedDetail from '../components/FeedDetail';
 import AddFeedForm from '../components/AddFeedForm';
+import RecommendationCard from '../components/RecommendationCard';
 import type { Feed, ConfigResponse } from '../types';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
@@ -165,9 +166,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <FeedList 
-            feeds={feeds || []} 
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <RecommendationCard onSubscribed={refetch} />
+          <FeedList
+            feeds={feeds || []}
             onFeedDeleted={refetch}
             onFeedSelected={setSelectedFeed}
             selectedFeedId={selectedFeed?.id}

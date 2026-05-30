@@ -517,6 +517,23 @@ class AppSettings(db.Model):  # type: ignore[name-defined, misc]
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
+class DismissedRecommendation(db.Model):  # type: ignore[name-defined, misc]
+    __tablename__ = "dismissed_recommendation"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    podcast_title = db.Column(db.Text, nullable=False)
+    podcast_rss_url = db.Column(db.Text, nullable=True)
+    dismissed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (
+        db.Index("ix_dismissed_recommendation_user_id", "user_id"),
+    )
+
+    def __repr__(self) -> str:
+        return f"<DismissedRecommendation user={self.user_id} title={self.podcast_title!r}>"
+
+
 class DiscordSettings(db.Model):  # type: ignore[name-defined, misc]
     __tablename__ = "discord_settings"
 
