@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Any, cast, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import litellm
 import requests
@@ -75,7 +75,7 @@ def _parse_json(raw: str) -> Dict[str, Any]:
 
 
 def _tavily_search(api_key: str, query: str) -> str:
-    from tavily import TavilyClient  # pylint: disable=import-outside-toplevel  # type: ignore[import-untyped]
+    from tavily import TavilyClient  # pylint: disable=import-outside-toplevel
 
     client = TavilyClient(api_key=api_key)
     results = client.search(query=query, search_depth="basic", max_results=5)
