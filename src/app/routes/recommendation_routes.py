@@ -4,7 +4,6 @@ from flask import Blueprint, g, jsonify, request
 from flask.typing import ResponseReturnValue
 
 from app.auth import is_auth_enabled
-from app.extensions import db
 from app.models import DismissedRecommendation, Feed, UserFeed
 from app.recommendation_service import get_recommendation
 from app.runtime_config import config as runtime_config
@@ -44,7 +43,10 @@ def get_recommendation_endpoint() -> ResponseReturnValue:
         result = get_recommendation(runtime_config, feed_titles, dismissed_titles)
     except Exception as exc:  # pylint: disable=broad-except
         logger.error("Recommendation service error: %s", exc)
-        return jsonify({"error": "Failed to generate recommendation", "detail": str(exc)}), 500
+        return (
+            jsonify({"error": "Failed to generate recommendation", "detail": str(exc)}),
+            500,
+        )
 
     if result is None:
         return jsonify({"recommendation": None}), 200

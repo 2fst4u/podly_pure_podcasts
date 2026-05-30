@@ -526,9 +526,7 @@ class DismissedRecommendation(db.Model):  # type: ignore[name-defined, misc]
     podcast_rss_url = db.Column(db.Text, nullable=True)
     dismissed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    __table_args__ = (
-        db.Index("ix_dismissed_recommendation_user_id", "user_id"),
-    )
+    __table_args__ = (db.Index("ix_dismissed_recommendation_user_id", "user_id"),)
 
     def __repr__(self) -> str:
         return f"<DismissedRecommendation user={self.user_id} title={self.podcast_title!r}>"

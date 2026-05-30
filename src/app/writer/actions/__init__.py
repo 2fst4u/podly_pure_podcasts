@@ -49,6 +49,9 @@ from .processor import upsert_model_call_action as upsert_model_call_action
 from .processor import (
     upsert_whisper_model_call_action as upsert_whisper_model_call_action,
 )
+from .recommendations import (
+    dismiss_recommendation_action as dismiss_recommendation_action,
+)
 from .system import ensure_active_run_action as ensure_active_run_action
 from .system import update_combined_config_action as update_combined_config_action
 from .system import update_discord_settings_action as update_discord_settings_action
@@ -64,4 +67,3 @@ from .users import update_user_last_active_action as update_user_last_active_act
 from .users import update_user_password_action as update_user_password_action
 from .users import update_user_settings_action as update_user_settings_action
 from .users import upsert_discord_user_action as upsert_discord_user_action
-from .recommendations import dismiss_recommendation_action as dismiss_recommendation_action

@@ -8,6 +8,7 @@ Uses a two-step LLM pipeline:
 This gives the model effective access to a live podcast catalog without
 requiring a separate web-search API key.
 """
+
 from __future__ import annotations
 
 import json
@@ -76,7 +77,9 @@ def _search_podcasts(term: str) -> List[Dict[str, Any]]:
                 "author": item.get("artistName") or "",
                 "description": item.get("collectionCensoredName") or "",
                 "feedUrl": feed_url,
-                "artworkUrl": item.get("artworkUrl100") or item.get("artworkUrl600") or "",
+                "artworkUrl": item.get("artworkUrl100")
+                or item.get("artworkUrl600")
+                or "",
                 "genres": item.get("genres") or [],
             }
         )
@@ -107,7 +110,7 @@ def get_recommendation(
         f"{feeds_summary}\n\n"
         "Generate 2 short search queries (2-4 words each) to find NEW podcasts they would enjoy. "
         "These queries will be sent to a podcast search engine.\n"
-        "Reply with ONLY a JSON array of strings, e.g. [\"true crime stories\", \"history mysteries\"]."
+        'Reply with ONLY a JSON array of strings, e.g. ["true crime stories", "history mysteries"].'
     )
     try:
         step1_raw = _call_llm(config, [{"role": "user", "content": step1_prompt}])
@@ -124,7 +127,9 @@ def get_recommendation(
 
     # Step 2: search for podcasts using the generated terms
     candidates: List[Dict[str, Any]] = []
-    seen_titles: set[str] = set(t.lower() for t in current_feed_titles + dismissed_titles)
+    seen_titles: set[str] = set(
+        t.lower() for t in current_feed_titles + dismissed_titles
+    )
     for term in search_terms[:2]:
         for result in _search_podcasts(term):
             if result["title"].lower() not in seen_titles:
@@ -155,7 +160,7 @@ def get_recommendation(
         "Reply with ONLY a JSON object with these keys:\n"
         '  "index": <1-based index of chosen podcast>,\n'
         '  "reason": <one sentence explaining why they would enjoy it>\n'
-        "Example: {\"index\": 3, \"reason\": \"You enjoy history, and this dives deep into forgotten empires.\"}"
+        'Example: {"index": 3, "reason": "You enjoy history, and this dives deep into forgotten empires."}'
     )
     try:
         step2_raw = _call_llm(config, [{"role": "user", "content": step2_prompt}])
