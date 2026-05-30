@@ -41,6 +41,7 @@ def _sanitize_config_for_client(cfg: Dict[str, Any]) -> Dict[str, Any]:
         data: Dict[str, Any] = dict(cfg)
         llm: Dict[str, Any] = dict(data.get("llm", {}))
         whisper: Dict[str, Any] = dict(data.get("whisper", {}))
+        app: Dict[str, Any] = dict(data.get("app", {}))
 
         llm_api_key = llm.pop("llm_api_key", None)
         if llm_api_key:
@@ -50,8 +51,13 @@ def _sanitize_config_for_client(cfg: Dict[str, Any]) -> Dict[str, Any]:
         if whisper_api_key:
             whisper["api_key_preview"] = _mask_secret(whisper_api_key)
 
+        tavily_api_key = app.pop("tavily_api_key", None)
+        if tavily_api_key:
+            app["tavily_api_key_preview"] = _mask_secret(tavily_api_key)
+
         data["llm"] = llm
         data["whisper"] = whisper
+        data["app"] = app
         return data
     except Exception:
         return {}
@@ -351,11 +357,21 @@ def _determine_whisper_type_for_metadata(data: Dict[str, Any]) -> str | None:
     return wtype if isinstance(wtype, str) else None
 
 
+def _register_app_overrides(overrides: Dict[str, Any]) -> None:
+    """Register app-level environment overrides."""
+    tavily_key = os.environ.get("TAVILY_API_KEY")
+    if tavily_key:
+        _register_override(
+            overrides, "app.tavily_api_key", "TAVILY_API_KEY", tavily_key, secret=True
+        )
+
+
 def _build_env_override_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
     overrides: Dict[str, Any] = {}
 
     _register_llm_overrides(overrides)
     _register_groq_shared_overrides(overrides)
+    _register_app_overrides(overrides)
 
     env_whisper_type = os.environ.get("WHISPER_TYPE")
     if env_whisper_type:

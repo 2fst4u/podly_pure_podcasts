@@ -509,12 +509,48 @@ class AppSettings(db.Model):  # type: ignore[name-defined, misc]
         default=DEFAULTS.APP_AUTOPROCESS_ON_DOWNLOAD,
     )
 
+    tavily_api_key = db.Column(db.Text, nullable=True)
+
     # Hash of the environment variables used to seed configuration.
     # Used to detect changes in environment variables between restarts.
     env_config_hash = db.Column(db.String(64), nullable=True)
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
+class DismissedRecommendation(db.Model):  # type: ignore[name-defined, misc]
+    __tablename__ = "dismissed_recommendation"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    podcast_title = db.Column(db.Text, nullable=False)
+    podcast_rss_url = db.Column(db.Text, nullable=True)
+    dismissed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (db.Index("ix_dismissed_recommendation_user_id", "user_id"),)
+
+    def __repr__(self) -> str:
+        return f"<DismissedRecommendation user={self.user_id} title={self.podcast_title!r}>"
+
+
+class PendingRecommendation(db.Model):  # type: ignore[name-defined, misc]
+    __tablename__ = "pending_recommendation"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    title = db.Column(db.Text, nullable=False)
+    author = db.Column(db.Text, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    rss_url = db.Column(db.Text, nullable=False)
+    artwork_url = db.Column(db.Text, nullable=True)
+    reason = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (db.Index("ix_pending_recommendation_user_id", "user_id"),)
+
+    def __repr__(self) -> str:
+        return f"<PendingRecommendation user={self.user_id} title={self.title!r}>"
 
 
 class DiscordSettings(db.Model):  # type: ignore[name-defined, misc]

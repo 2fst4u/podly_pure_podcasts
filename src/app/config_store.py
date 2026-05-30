@@ -472,6 +472,7 @@ def read_combined() -> Dict[str, Any]:
             "enable_public_landing_page": app_s.enable_public_landing_page,
             "user_limit_total": app_s.user_limit_total,
             "autoprocess_on_download": app_s.autoprocess_on_download,
+            "tavily_api_key": app_s.tavily_api_key,
         },
     }
 
@@ -609,6 +610,8 @@ def _update_section_app(data: Dict[str, Any]) -> Tuple[Optional[int], Optional[i
     ]:
         if key in data:
             setattr(row, key, data[key])
+    if "tavily_api_key" in data and not _is_empty(data["tavily_api_key"]):
+        row.tavily_api_key = data["tavily_api_key"]
     safe_commit(
         db.session,
         must_succeed=True,
