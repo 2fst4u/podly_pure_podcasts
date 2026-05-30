@@ -50,7 +50,13 @@ from .processor import (
     upsert_whisper_model_call_action as upsert_whisper_model_call_action,
 )
 from .recommendations import (
+    clear_pending_recommendation_action as clear_pending_recommendation_action,
+)
+from .recommendations import (
     dismiss_recommendation_action as dismiss_recommendation_action,
+)
+from .recommendations import (
+    save_pending_recommendation_action as save_pending_recommendation_action,
 )
 from .system import ensure_active_run_action as ensure_active_run_action
 from .system import update_combined_config_action as update_combined_config_action

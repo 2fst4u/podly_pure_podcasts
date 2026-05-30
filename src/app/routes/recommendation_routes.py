@@ -4,7 +4,7 @@ from flask import Blueprint, g, jsonify, request
 from flask.typing import ResponseReturnValue
 
 from app.auth import is_auth_enabled
-from app.models import DismissedRecommendation, Feed, UserFeed
+from app.models import DismissedRecommendation, Feed, PendingRecommendation, UserFeed
 from app.recommendation_service import get_recommendation
 from app.runtime_config import config as runtime_config
 from app.writer.client import writer_client
@@ -24,6 +24,26 @@ def get_recommendation_endpoint() -> ResponseReturnValue:
 
     if is_auth_enabled() and user is None:
         return jsonify({"error": "Authentication required."}), 401
+
+    uid = user.id if user else None
+
+    cached = PendingRecommendation.query.filter_by(user_id=uid).first()
+    if cached:
+        return (
+            jsonify(
+                {
+                    "recommendation": {
+                        "title": cached.title,
+                        "author": cached.author,
+                        "description": cached.description,
+                        "rss_url": cached.rss_url,
+                        "artwork_url": cached.artwork_url,
+                        "reason": cached.reason,
+                    }
+                }
+            ),
+            200,
+        )
 
     if user is not None:
         feeds = (
@@ -50,6 +70,20 @@ def get_recommendation_endpoint() -> ResponseReturnValue:
 
     if result is None:
         return jsonify({"recommendation": None}), 200
+
+    writer_client.action(
+        "save_pending_recommendation",
+        {
+            "user_id": uid,
+            "title": result["title"],
+            "author": result.get("author", ""),
+            "description": result.get("description", ""),
+            "rss_url": result["rss_url"],
+            "artwork_url": result.get("artwork_url", ""),
+            "reason": result.get("reason", ""),
+        },
+        wait=True,
+    )
 
     return jsonify({"recommendation": result}), 200
 
@@ -83,3 +117,22 @@ def dismiss_recommendation_endpoint() -> ResponseReturnValue:
         return jsonify({"error": getattr(result, "error", "Failed to dismiss")}), 500
 
     return jsonify({"status": "dismissed", "podcast_title": podcast_title}), 200
+
+
+@recommendation_bp.route("/api/recommendations/clear", methods=["POST"])
+def clear_recommendation_endpoint() -> ResponseReturnValue:
+    """Clear the pending recommendation without dismissing (used after subscribing)."""
+    user = _current_user()
+
+    if is_auth_enabled() and user is None:
+        return jsonify({"error": "Authentication required."}), 401
+
+    user_id = user.id if user else None
+
+    writer_client.action(
+        "clear_pending_recommendation",
+        {"user_id": user_id},
+        wait=True,
+    )
+
+    return jsonify({"status": "cleared"}), 200

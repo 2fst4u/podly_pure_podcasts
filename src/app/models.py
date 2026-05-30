@@ -534,6 +534,25 @@ class DismissedRecommendation(db.Model):  # type: ignore[name-defined, misc]
         return f"<DismissedRecommendation user={self.user_id} title={self.podcast_title!r}>"
 
 
+class PendingRecommendation(db.Model):  # type: ignore[name-defined, misc]
+    __tablename__ = "pending_recommendation"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    title = db.Column(db.Text, nullable=False)
+    author = db.Column(db.Text, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    rss_url = db.Column(db.Text, nullable=False)
+    artwork_url = db.Column(db.Text, nullable=True)
+    reason = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (db.Index("ix_pending_recommendation_user_id", "user_id"),)
+
+    def __repr__(self) -> str:
+        return f"<PendingRecommendation user={self.user_id} title={self.title!r}>"
+
+
 class DiscordSettings(db.Model):  # type: ignore[name-defined, misc]
     __tablename__ = "discord_settings"
 

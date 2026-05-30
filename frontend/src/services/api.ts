@@ -627,6 +627,10 @@ export const recommendationsApi = {
       podcast_rss_url: podcastRssUrl,
     });
   },
+
+  clearPending: async (): Promise<void> => {
+    await api.post('/api/recommendations/clear');
+  },
 };
 
 export const jobsApi = {

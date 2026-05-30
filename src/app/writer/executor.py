@@ -143,6 +143,14 @@ class CommandExecutor:
         self.register_action(
             "dismiss_recommendation", writer_actions.dismiss_recommendation_action
         )
+        self.register_action(
+            "save_pending_recommendation",
+            writer_actions.save_pending_recommendation_action,
+        )
+        self.register_action(
+            "clear_pending_recommendation",
+            writer_actions.clear_pending_recommendation_action,
+        )
 
     def _discover_models(self) -> Dict[str, Any]:
         """Discover all SQLAlchemy models in app.models"""
