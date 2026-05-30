@@ -137,12 +137,12 @@ function AccountSecuritySection({ changePassword, refreshUser }: AccountSecurity
           >
             {passwordSubmitting ? 'Updating…' : 'Update password'}
           </button>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             After updating, rotate <code className="font-mono">PODLY_ADMIN_PASSWORD</code> to match.
           </p>
         </div>
       </form>
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </Section>
   );
 }
@@ -170,19 +170,19 @@ function UserLimitSection({ currentUsers, userLimit, onChangeLimit, onSave, isSa
             onChange={(event) => onChangeLimit(event.target.value)}
             placeholder="Unlimited"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Leave blank for unlimited; set to 0 to block new user creation. Applies only when authentication is enabled.
           </p>
         </Field>
-        <div className="text-sm text-gray-700 space-y-1">
+        <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
           <div className="font-semibold">Current users</div>
           <div>{isLoadingUsers ? 'Loading…' : currentUsers}</div>
           {userLimit !== null && userLimit > 0 && currentUsers >= userLimit ? (
-            <div className="text-xs text-red-600">
+            <div className="text-xs text-red-600 dark:text-red-400">
               Limit reached. New users are blocked until the total drops below {userLimit}.
             </div>
           ) : (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               New user creation is blocked once the limit is reached.
             </div>
           )}
@@ -191,7 +191,7 @@ function UserLimitSection({ currentUsers, userLimit, onChangeLimit, onSave, isSa
       <div className="mt-3">
         <SaveButton onSave={onSave} isPending={isSaving} />
       </div>
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </Section>
   );
 }
@@ -322,7 +322,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
         {/* Create User Form */}
         <form className="grid gap-3 md:grid-cols-2" onSubmit={handleCreateUser}>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
             <input
               className="input"
               type="text"
@@ -333,7 +333,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
             <input
               className="input"
               type="password"
@@ -343,7 +343,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm password</label>
             <input
               className="input"
               type="password"
@@ -353,7 +353,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
             <select
               className="input"
               value={newUser.role}
@@ -375,9 +375,9 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
 
         {/* User List */}
         <div className="space-y-3">
-          {usersLoading && <div className="text-sm text-gray-600">Loading users…</div>}
+          {usersLoading && <div className="text-sm text-gray-600 dark:text-gray-400">Loading users…</div>}
           {!usersLoading && (!managedUsers || managedUsers.length === 0) && (
-            <div className="text-sm text-gray-600">No additional users configured.</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">No additional users configured.</div>
           )}
           {!usersLoading && managedUsers && managedUsers.length > 0 && (
             <div className="space-y-3">
@@ -391,12 +391,12 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                 return (
                   <div
                     key={managed.id}
-                    className="border border-gray-200 rounded-lg p-3 space-y-3 bg-white"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-3 bg-white dark:bg-gray-900"
                   >
                     <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{managed.username}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">{managed.username}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                           Added {new Date(managed.created_at).toLocaleString()} • Role {managed.role} • Feeds {allowance} • Status {subscriptionStatus}
                           {managed.last_active && (
                             <> • Last Active {new Date(managed.last_active).toLocaleString()}</>
@@ -405,7 +405,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <div className="flex items-center gap-1" title="Override feed allowance">
-                          <span className="text-xs text-gray-500">Feed Allowance Override:</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">Feed Allowance Override:</span>
                           <input
                             className="input text-sm w-20 py-1"
                             type="number"
@@ -442,7 +442,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                         </select>
                         <button
                           type="button"
-                          className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+                          className="px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-md text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                           onClick={() => {
                             if (isActive) {
                               setActiveResetUser(null);
@@ -459,7 +459,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                         </button>
                         <button
                           type="button"
-                          className="px-3 py-1 border border-red-300 text-red-600 rounded-md text-sm hover:bg-red-50 disabled:opacity-50"
+                          className="px-3 py-1 border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 rounded-md text-sm hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
                           onClick={() => void handleDeleteUser(managed.username)}
                           disabled={disableDelete}
                         >
@@ -471,7 +471,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                     {isActive && (
                       <form className="grid gap-2 md:grid-cols-3" onSubmit={handleResetPassword}>
                         <div className="md:col-span-1">
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                             New password
                           </label>
                           <input
@@ -483,7 +483,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                           />
                         </div>
                         <div className="md:col-span-1">
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                             Confirm password
                           </label>
                           <input
@@ -501,7 +501,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
                           >
                             Update
                           </button>
-                          <p className="text-xs text-gray-500">Share new credentials securely.</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Share new credentials securely.</p>
                         </div>
                       </form>
                     )}
@@ -512,7 +512,7 @@ function UserManagementSection({ currentUser, refreshUser, logout, managedUsers,
           )}
         </div>
       </div>
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </Section>
   );
 }

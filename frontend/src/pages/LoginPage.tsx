@@ -84,17 +84,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl border border-gray-200 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex flex-col items-center gap-2 mb-6">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/images/logos/logo.webp" alt="Podly" className="h-10 w-auto" />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Sign in to Podly</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Sign in to Podly</h1>
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700 mb-4">
+          <div className="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-2 text-sm text-red-700 dark:text-red-300 mb-4">
             {error}
           </div>
         )}
@@ -120,7 +120,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPasswordLogin(true)}
-                className="w-full text-sm font-medium text-blue-700 hover:text-blue-800 hover:underline"
+                className="w-full text-sm font-medium text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 hover:underline"
               >
                 Use username / password
               </button>
@@ -130,11 +130,11 @@ export default function LoginPage() {
 
         {(!discordEnabled || showPasswordLogin) && (
           <form
-            className={`space-y-4 ${discordEnabled ? 'pt-4 border-t border-gray-200' : ''}`}
+            className={`space-y-4 ${discordEnabled ? 'pt-4 border-t border-gray-200 dark:border-gray-700' : ''}`}
             onSubmit={handleSubmit}
           >
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Username
               </label>
               <input
@@ -144,14 +144,14 @@ export default function LoginPage() {
                 autoComplete="username"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={submitting}
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
               <input
@@ -161,7 +161,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={submitting}
                 required
               />
@@ -183,7 +183,7 @@ export default function LoginPage() {
             <img src="https://img.shields.io/badge/discord-join-blue.svg?logo=discord&logoColor=white" alt="Discord" />
           </a>
           {landingPageEnabled && (
-            <Link to="/" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+            <Link to="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
               ← Back to home
             </Link>
           )}
