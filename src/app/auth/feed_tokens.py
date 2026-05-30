@@ -93,7 +93,12 @@ def authenticate_feed_token(
     )
 
     return FeedTokenAuthResult(
-        user=AuthenticatedUser(id=user.id, username=user.username, role=user.role),
+        user=AuthenticatedUser(
+            id=user.id,
+            username=user.username,
+            role=user.role,
+            dark_mode=user.dark_mode,
+        ),
         feed_id=token.feed_id,
         token=token,
     )

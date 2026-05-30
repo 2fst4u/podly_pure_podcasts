@@ -60,7 +60,7 @@ export default function ProcessingStatsButton({
     <>
       <button
         onClick={() => setShowModal(true)}
-        className={`px-3 py-1 text-xs rounded font-medium transition-colors border bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 flex items-center gap-1 ${className}`}
+        className={`px-3 py-1 text-xs rounded font-medium transition-colors border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white flex items-center gap-1 ${className}`}
       >
         Stats
       </button>
@@ -68,13 +68,13 @@ export default function ProcessingStatsButton({
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900 text-left">Processing Statistics & Debug</h2>
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white text-left">Processing Statistics & Debug</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                 aria-label="Close modal"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +84,7 @@ export default function ProcessingStatsButton({
             </div>
 
             {/* Tabs */}
-            <div className="border-b">
+            <div className="border-b dark:border-gray-700">
               <nav className="flex space-x-8 px-6">
                 {[
                   { id: 'overview', label: 'Overview' },
@@ -97,8 +97,8 @@ export default function ProcessingStatsButton({
                     onClick={() => setActiveTab(tab.id as 'overview' | 'model-calls' | 'transcript' | 'identifications')}
                     className={`py-4 px-1 border-b-2 font-medium text-sm ${
                       activeTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
                   >
                     {tab.label}
@@ -115,11 +115,11 @@ export default function ProcessingStatsButton({
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  <span className="ml-3 text-gray-600">Loading stats...</span>
+                  <span className="ml-3 text-gray-600 dark:text-gray-400">Loading stats...</span>
                 </div>
               ) : error ? (
                 <div className="text-center py-12">
-                  <p className="text-red-600">Failed to load processing statistics</p>
+                  <p className="text-red-600 dark:text-red-400">Failed to load processing statistics</p>
                 </div>
               ) : stats ? (
                 <>
@@ -127,16 +127,16 @@ export default function ProcessingStatsButton({
                   {activeTab === 'overview' && (
                     <div className="space-y-6">
                       {/* Episode Info */}
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <h3 className="font-semibold text-gray-900 mb-2 text-left">Episode Information</h3>
+                      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-left">Episode Information</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div className="text-left">
-                            <span className="font-medium text-gray-700">Title:</span>
-                            <span className="ml-2 text-gray-600">{stats.post?.title || 'Unknown'}</span>
+                            <span className="font-medium text-gray-700 dark:text-gray-300">Title:</span>
+                            <span className="ml-2 text-gray-600 dark:text-gray-400">{stats.post?.title || 'Unknown'}</span>
                           </div>
                           <div className="text-left">
-                            <span className="font-medium text-gray-700">Duration:</span>
-                            <span className="ml-2 text-gray-600">
+                            <span className="font-medium text-gray-700 dark:text-gray-300">Duration:</span>
+                            <span className="ml-2 text-gray-600 dark:text-gray-400">
                               {stats.post?.duration ? formatDuration(stats.post.duration) : 'Unknown'}
                             </span>
                           </div>
@@ -145,46 +145,46 @@ export default function ProcessingStatsButton({
 
                       {/* Key Metrics */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-4 text-left">Key Metrics</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-left">Key Metrics</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {stats.processing_stats?.total_segments || 0}
                             </div>
-                            <div className="text-sm text-blue-800">Transcript Segments</div>
+                            <div className="text-sm text-blue-800 dark:text-blue-300">Transcript Segments</div>
                           </div>
 
                           <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {stats.processing_stats?.content_segments || 0}
                             </div>
-                            <div className="text-sm text-green-800">Content Segments</div>
+                            <div className="text-sm text-green-800 dark:text-green-300">Content Segments</div>
                           </div>
 
                           <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 text-center">
                             <div className="text-2xl font-bold text-red-600">
                               {stats.processing_stats?.ad_segments_count || 0}
                             </div>
-                            <div className="text-sm text-red-800">Ad Segments Removed</div>
+                            <div className="text-sm text-red-800 dark:text-red-300">Ad Segments Removed</div>
                           </div>
                         </div>
                       </div>
 
                       {/* Model Performance */}
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-4 text-left">AI Model Performance</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-left">AI Model Performance</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* Model Call Status */}
-                          <div className="bg-white border rounded-lg p-4">
-                            <h4 className="font-medium text-gray-900 mb-3 text-left">Processing Status</h4>
+                          <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-left">Processing Status</h4>
                             <div className="space-y-2">
                               {Object.entries(stats.processing_stats?.model_call_statuses || {}).map(([status, count]) => (
                                 <div key={status} className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600 capitalize">{status}</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{status}</span>
                                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    status === 'success' ? 'bg-green-100 text-green-800' :
-                                    status === 'failed' ? 'bg-red-100 text-red-800' :
-                                    'bg-gray-100 text-gray-800'
+                                    status === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                                    status === 'failed' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                                    'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100'
                                   }`}>
                                     {count}
                                   </span>
@@ -194,13 +194,13 @@ export default function ProcessingStatsButton({
                           </div>
 
                           {/* Model Types */}
-                          <div className="bg-white border rounded-lg p-4">
-                            <h4 className="font-medium text-gray-900 mb-3 text-left">Models Used</h4>
+                          <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-left">Models Used</h4>
                             <div className="space-y-2">
                               {Object.entries(stats.processing_stats?.model_types || {}).map(([model, count]) => (
                                 <div key={model} className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">{model}</span>
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">{model}</span>
+                                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium">
                                     {count} calls
                                   </span>
                                 </div>
@@ -215,72 +215,72 @@ export default function ProcessingStatsButton({
                   {/* Model Calls Tab */}
                   {activeTab === 'model-calls' && (
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4 text-left">Model Calls ({stats.model_calls?.length || 0})</h3>
-                      <div className="bg-white border rounded-lg overflow-hidden">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-left">Model Calls ({stats.model_calls?.length || 0})</h3>
+                      <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg overflow-hidden">
                         <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-900">
                               <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Segment Range</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Retries</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Segment Range</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Timestamp</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Retries</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                               </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                               {(stats.model_calls || []).map((call) => (
                                 <>
-                                  <tr key={call.id} className="hover:bg-gray-50">
-                                    <td className="px-4 py-3 text-sm text-gray-900">{call.id}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-900">{call.model_name}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-600">{call.segment_range}</td>
+                                  <tr key={call.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{call.id}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{call.model_name}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{call.segment_range}</td>
                                     <td className="px-4 py-3">
                                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                        call.status === 'success' ? 'bg-green-100 text-green-800' :
-                                        call.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                        'bg-yellow-100 text-yellow-800'
+                                        call.status === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                                        call.status === 'failed' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                                        'bg-yellow-100 dark:bg-amber-900/20 text-yellow-800 dark:text-amber-300'
                                       }`}>
                                         {call.status}
                                       </span>
                                     </td>
-                                    <td className="px-4 py-3 text-sm text-gray-600">{formatTimestamp(call.timestamp)}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-600">{call.retry_attempts}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatTimestamp(call.timestamp)}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{call.retry_attempts}</td>
                                     <td className="px-4 py-3">
                                       <button
                                         onClick={() => toggleModelCallDetails(call.id)}
-                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
                                       >
                                         {expandedModelCalls.has(call.id) ? 'Hide' : 'Details'}
                                       </button>
                                     </td>
                                   </tr>
                                   {expandedModelCalls.has(call.id) && (
-                                    <tr className="bg-gray-50">
+                                    <tr className="bg-gray-50 dark:bg-gray-900">
                                       <td colSpan={7} className="px-4 py-4">
                                         <div className="space-y-4">
                                           {call.prompt && (
                                             <div>
-                                              <h5 className="font-medium text-gray-900 mb-2 text-left">Prompt:</h5>
-                                              <div className="bg-gray-100 p-3 rounded text-sm font-mono whitespace-pre-wrap max-h-40 overflow-y-auto text-left">
+                                              <h5 className="font-medium text-gray-900 dark:text-white mb-2 text-left">Prompt:</h5>
+                                              <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-3 rounded text-sm font-mono whitespace-pre-wrap max-h-40 overflow-y-auto text-left">
                                                 {call.prompt}
                                               </div>
                                             </div>
                                           )}
                                           {call.error_message && (
                                             <div>
-                                              <h5 className="font-medium text-red-900 mb-2 text-left">Error Message:</h5>
-                                              <div className="bg-red-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-left">
+                                              <h5 className="font-medium text-red-900 dark:text-red-300 mb-2 text-left">Error Message:</h5>
+                                              <div className="bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 p-3 rounded text-sm font-mono whitespace-pre-wrap text-left">
                                                 {call.error_message}
                                               </div>
                                             </div>
                                           )}
                                           {call.response && (
                                             <div>
-                                              <h5 className="font-medium text-gray-900 mb-2 text-left">Response:</h5>
-                                              <div className="bg-gray-100 p-3 rounded text-sm font-mono whitespace-pre-wrap max-h-40 overflow-y-auto text-left">
+                                              <h5 className="font-medium text-gray-900 dark:text-white mb-2 text-left">Response:</h5>
+                                              <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-3 rounded text-sm font-mono whitespace-pre-wrap max-h-40 overflow-y-auto text-left">
                                                 {call.response}
                                               </div>
                                             </div>
@@ -301,39 +301,39 @@ export default function ProcessingStatsButton({
                   {/* Transcript Segments Tab */}
                   {activeTab === 'transcript' && (
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4 text-left">Transcript Segments ({stats.transcript_segments?.length || 0})</h3>
-                      <div className="bg-white border rounded-lg overflow-hidden">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-left">Transcript Segments ({stats.transcript_segments?.length || 0})</h3>
+                      <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg overflow-hidden">
                         <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-900">
                               <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seq #</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Range</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Text</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Seq #</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time Range</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Label</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Text</th>
                               </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                               {(stats.transcript_segments || []).map((segment) => (
-                                <tr key={segment.id} className={`hover:bg-gray-50 ${
-                                  segment.primary_label === 'ad' ? 'bg-red-50' : ''
+                                <tr key={segment.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
+                                  segment.primary_label === 'ad' ? 'bg-red-50 dark:bg-red-900/20' : ''
                                 }`}>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{segment.sequence_num}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">
+                                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{segment.sequence_num}</td>
+                                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                     {segment.start_time}s - {segment.end_time}s
                                   </td>
                                   <td className="px-4 py-3">
                                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                                       segment.primary_label === 'ad'
-                                        ? 'bg-red-100 text-red-800'
-                                        : 'bg-green-100 text-green-800'
+                                        ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                                        : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                                     }`}>
                                       {segment.primary_label === 'ad'
                                         ? (segment.mixed ? 'Ad (mixed)' : 'Ad')
                                         : 'Content'}
                                     </span>
                                   </td>
-                                  <td className="px-4 py-3 text-sm text-gray-900 max-w-md">
+                                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white max-w-md">
                                     <div className="truncate text-left" title={segment.text}>
                                       {segment.text}
                                     </div>
@@ -350,47 +350,47 @@ export default function ProcessingStatsButton({
                   {/* Identifications Tab */}
                   {activeTab === 'identifications' && (
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-4 text-left">Identifications ({stats.identifications?.length || 0})</h3>
-                      <div className="bg-white border rounded-lg overflow-hidden">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-left">Identifications ({stats.identifications?.length || 0})</h3>
+                      <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg overflow-hidden">
                         <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-900">
                               <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Segment ID</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Range</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model Call</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Text</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Segment ID</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time Range</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Label</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Confidence</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model Call</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Text</th>
                               </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                               {(stats.identifications || []).map((identification) => (
-                                <tr key={identification.id} className={`hover:bg-gray-50 ${
-                                  identification.label === 'ad' ? 'bg-red-50' : ''
+                                <tr key={identification.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
+                                  identification.label === 'ad' ? 'bg-red-50 dark:bg-red-900/20' : ''
                                 }`}>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{identification.id}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">{identification.transcript_segment_id}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">
+                                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{identification.id}</td>
+                                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{identification.transcript_segment_id}</td>
+                                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                     {identification.segment_start_time}s - {identification.segment_end_time}s
                                   </td>
                                   <td className="px-4 py-3">
                                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                                       identification.label === 'ad'
-                                        ? 'bg-red-100 text-red-800'
-                                        : 'bg-green-100 text-green-800'
+                                        ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                                        : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                                     }`}>
                                       {identification.label === 'ad'
                                         ? (identification.mixed ? 'ad (mixed)' : 'ad')
                                         : identification.label}
                                     </span>
                                   </td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">
+                                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                     {identification.confidence ? identification.confidence.toFixed(2) : 'N/A'}
                                   </td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">{identification.model_call_id}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-900 max-w-md">
+                                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{identification.model_call_id}</td>
+                                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white max-w-md">
                                     <div className="truncate text-left" title={identification.segment_text}>
                                       {identification.segment_text}
                                     </div>

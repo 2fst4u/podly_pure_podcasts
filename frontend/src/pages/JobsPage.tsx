@@ -5,19 +5,19 @@ import type { CleanupPreview, Job, JobManagerRun, JobManagerStatus } from '../ty
 function getStatusColor(status: string) {
   switch (status) {
     case 'running':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-100 dark:bg-amber-900/20 text-yellow-800 dark:text-amber-300';
     case 'failed':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
     case 'completed':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
     case 'skipped':
-      return 'bg-purple-100 text-purple-800';
+      return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
     case 'cancelled':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100';
   }
 }
 
@@ -33,7 +33,7 @@ function StatusBadge({ status }: { status: string }) {
 function ProgressBar({ value }: { value: number }) {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
   return (
-    <div className="w-full bg-gray-200 rounded h-2">
+    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded h-2">
       <div
         className="bg-indigo-600 h-2 rounded"
         style={{ width: `${clamped}%` }}
@@ -45,8 +45,8 @@ function ProgressBar({ value }: { value: number }) {
 function RunStat({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wide text-gray-500">{label}</div>
-      <div className="mt-1 text-lg font-semibold text-gray-900">{value}</div>
+      <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">{label}</div>
+      <div className="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{value}</div>
     </div>
   );
 }
@@ -231,11 +231,11 @@ export default function JobsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Jobs Manager</h2>
-            <p className="text-xs text-gray-600">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Jobs Manager</h2>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               {run
                 ? hasActiveWork
                   ? `Processing · Last update ${formatDateTime(run.updated_at)}`
@@ -246,14 +246,14 @@ export default function JobsPage() {
           {run ? (
             <StatusBadge status={run.status} />
           ) : (
-            <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
               idle
             </span>
           )}
         </div>
 
         {statusError && (
-          <div className="mt-2 text-xs text-red-600">{statusError}</div>
+          <div className="mt-2 text-xs text-red-600 dark:text-red-400">{statusError}</div>
         )}
 
         {run ? (
@@ -267,15 +267,15 @@ export default function JobsPage() {
             </div>
             <div className="mt-4 space-y-1">
               <ProgressBar value={run.progress_percentage} />
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 {run.completed_jobs} completed · {run.skipped_jobs} skipped · {run.failed_jobs} failed of {run.total_jobs} jobs
               </div>
             </div>
-            <div className="mt-3 text-xs text-gray-500">
-              Trigger: <span className="font-medium text-gray-700">{run.trigger}</span>
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+              Trigger: <span className="font-medium text-gray-700 dark:text-gray-300">{run.trigger}</span>
             </div>
             {run.counters_reset_at ? (
-              <div className="mt-1 text-xs text-gray-500">
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Stats since {formatDateTime(run.counters_reset_at)}
               </div>
             ) : null}
@@ -283,54 +283,54 @@ export default function JobsPage() {
         ) : null}
       </div>
 
-      <div className="rounded border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Post Cleanup</h3>
-            <p className="text-xs text-gray-600">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white">Post Cleanup</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               {cleanupDisabled
                 ? 'Cleanup is disabled while retention days are unset or zero.'
                 : `Episodes older than ${retentionDays} day${retentionDays === 1 ? '' : 's'} will be removed.`}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-xs uppercase tracking-wide text-gray-500">Eligible</div>
-            <div className="text-lg font-semibold text-gray-900">
+            <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Eligible</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">
               {cleanupLoading ? '…' : cleanupEligibleCount}
             </div>
           </div>
         </div>
 
         {cleanupError && (
-          <div className="mt-2 text-xs text-red-600">{cleanupError}</div>
+          <div className="mt-2 text-xs text-red-600 dark:text-red-400">{cleanupError}</div>
         )}
         {cleanupMessage && (
-          <div className="mt-2 text-xs text-green-700">{cleanupMessage}</div>
+          <div className="mt-2 text-xs text-green-700 dark:text-green-300">{cleanupMessage}</div>
         )}
 
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <div className="text-xs uppercase tracking-wide text-gray-500">Retention</div>
-            <div className="text-sm font-medium text-gray-900">
+            <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Retention</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
               {cleanupDisabled ? 'Disabled' : `${retentionDays} day${retentionDays === 1 ? '' : 's'}`}
             </div>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-wide text-gray-500">Eligible episodes</div>
-            <div className="text-sm font-medium text-gray-900">
+            <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Eligible episodes</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
               {cleanupLoading ? 'Loading…' : cleanupEligibleCount}
             </div>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-wide text-gray-500">Cutoff date</div>
-            <div className="text-sm font-medium text-gray-900">
+            <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Cutoff date</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
               {cleanupPreview?.cutoff_utc ? formatDateTime(cleanupPreview.cutoff_utc) : '—'}
             </div>
           </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             Includes completed jobs and non-whitelisted episodes with release dates older than the retention window.
           </div>
           <button
@@ -345,8 +345,8 @@ export default function JobsPage() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">{mode === 'active' ? 'Active Jobs' : 'All Jobs'}</h3>
-          <p className="text-sm text-gray-600">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{mode === 'active' ? 'Active Jobs' : 'All Jobs'}</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {mode === 'active'
               ? 'Queued and running jobs, ordered by priority.'
               : 'All jobs ordered by priority (running/pending first).'}
@@ -363,7 +363,7 @@ export default function JobsPage() {
           {mode === 'active' ? (
             <button
               onClick={async () => { setMode('all'); await loadStatus(); await loadAll(); await loadCleanupPreview(); }}
-              className="inline-flex items-center rounded-md bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="inline-flex items-center rounded-md bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
               disabled={loading}
             >
               Load all jobs
@@ -371,7 +371,7 @@ export default function JobsPage() {
           ) : (
             <button
               onClick={async () => { setMode('active'); await loadStatus(); await loadActive(); await loadCleanupPreview(); }}
-              className="inline-flex items-center rounded-md bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="inline-flex items-center rounded-md bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
               disabled={loading}
             >
               Show active only
@@ -381,35 +381,35 @@ export default function JobsPage() {
       </div>
 
       {error && (
-        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>
+        <div className="rounded border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">{error}</div>
       )}
 
       {jobs.length === 0 && !loading ? (
-        <div className="text-sm text-gray-600">No jobs to display.</div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">No jobs to display.</div>
       ) : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs.map((job) => (
-          <div key={job.job_id} className="bg-white border rounded shadow-sm p-4 space-y-3">
+          <div key={job.job_id} className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded shadow-sm p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-medium text-gray-900 truncate">
+              <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                 {job.post_title || 'Untitled episode'}
               </div>
               <StatusBadge status={job.status} />
             </div>
-            <div className="text-xs text-gray-600 truncate">{job.feed_title || 'Unknown feed'}</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 truncate">{job.feed_title || 'Unknown feed'}</div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-gray-700">
+              <div className="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300">
                 <span>Priority</span>
                 <span className="font-medium">{job.priority}</span>
               </div>
-              <div className="flex items-center justify-between text-xs text-gray-700">
+              <div className="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300">
                 <span>Step</span>
                 <span className="font-medium">{job.step}/{job.total_steps} {job.step_name ? `· ${job.step_name}` : ''}</span>
               </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-gray-700">
+                <div className="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300">
                   <span>Progress</span>
                   <span className="font-medium">{Math.round(job.progress_percentage)}%</span>
                 </div>
@@ -417,33 +417,33 @@ export default function JobsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+            <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-400">
               <div>
-                <div className="text-gray-500">Job ID</div>
+                <div className="text-gray-500 dark:text-gray-400">Job ID</div>
                 <div className="truncate" title={job.job_id}>{job.job_id}</div>
               </div>
               <div>
-                <div className="text-gray-500">Post GUID</div>
+                <div className="text-gray-500 dark:text-gray-400">Post GUID</div>
                 <div className="truncate" title={job.post_guid}>{job.post_guid}</div>
               </div>
               <div>
-                <div className="text-gray-500">Created</div>
+                <div className="text-gray-500 dark:text-gray-400">Created</div>
                 <div>{job.created_at ? formatDateTime(job.created_at) : '—'}</div>
               </div>
               <div>
-                <div className="text-gray-500">Started</div>
+                <div className="text-gray-500 dark:text-gray-400">Started</div>
                 <div>{job.started_at ? formatDateTime(job.started_at) : '—'}</div>
               </div>
               {job.error_message ? (
                 <div className="col-span-2">
-                  <div className="text-gray-500">Message</div>
-                  <div className="text-red-700 truncate" title={job.error_message}>{job.error_message}</div>
+                  <div className="text-gray-500 dark:text-gray-400">Message</div>
+                  <div className="text-red-700 dark:text-red-400 truncate" title={job.error_message}>{job.error_message}</div>
                 </div>
               ) : null}
             </div>
 
             {(job.status === 'pending' || job.status === 'running') && (
-              <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => { void cancelJob(job.job_id); }}
                   disabled={cancellingJobs.has(job.job_id)}

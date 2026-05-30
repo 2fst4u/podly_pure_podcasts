@@ -20,8 +20,8 @@ export default function Field({
   return (
     <label className="flex items-start justify-between gap-3">
       <div className={labelWidth}>
-        <span className="block text-sm text-gray-700">{label}</span>
-        {hint ? <span className="block text-xs text-gray-500">{hint}</span> : null}
+        <span className="block text-sm text-gray-700 dark:text-gray-300">{label}</span>
+        {hint ? <span className="block text-xs text-gray-500 dark:text-gray-400">{hint}</span> : null}
         <EnvVarHint meta={envMeta} />
       </div>
       <div className="flex-1">{children}</div>

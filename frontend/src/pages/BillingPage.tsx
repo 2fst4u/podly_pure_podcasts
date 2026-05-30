@@ -63,7 +63,7 @@ export default function BillingPage() {
   if (isLoading || !data) {
     return (
       <div className="p-6">
-        <div className="text-sm text-gray-600">Loading billing…</div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">Loading billing…</div>
       </div>
     );
   }
@@ -78,50 +78,50 @@ export default function BillingPage() {
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Billing</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Pay what you want for the Starter Bundle (10 feeds).
         </p>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-5 space-y-4">
         <div className="flex flex-wrap gap-3 items-center justify-between">
           <div>
-            <div className="text-sm text-gray-600">Current plan</div>
-            <div className="text-lg font-semibold text-gray-900">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Current plan</div>
+            <div className="text-lg font-semibold text-gray-900 dark:text-white">
               {isSubscribed ? 'Starter Bundle (10 Feeds)' : 'Free Tier'}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               {planLimitInfo}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-600">Monthly payment</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Monthly payment</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {isSubscribed ? `$${currentAmountDollars.toFixed(2)}` : '$0.00'}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               Subscription status: {data.subscription_status || 'inactive'}
             </div>
           </div>
         </div>
 
-        <div className="space-y-3 pt-4 border-t border-gray-100">
-          <div className="text-sm text-gray-700 font-medium">
+        <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="text-sm text-gray-700 dark:text-gray-300 font-medium">
             {isSubscribed ? 'Update your price' : 'Subscribe to Starter Bundle'}
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Get 10 feeds for a monthly price of your choice (min ${minAmountDollars.toFixed(2)}).
           </p>
           
-          <div className="text-xs text-amber-800 bg-amber-50 p-3 rounded-md border border-amber-200">
+          <div className="text-xs text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-md border border-amber-200 dark:border-amber-800">
             <strong>Note:</strong> We suggest paying ~$1 per feed you use. If revenue doesn't cover server costs, we may have to shut down the service.
           </div>
           
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="relative rounded-md shadow-sm w-32">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span className="text-gray-500 sm:text-sm">$</span>
+                <span className="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
               </div>
               <input
                 type="number"
@@ -129,12 +129,12 @@ export default function BillingPage() {
                 step={0.5}
                 value={amount}
                 onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
-                className="block w-full rounded-md border-gray-300 pl-7 pr-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm border"
+                className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 pl-7 pr-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm border"
                 placeholder="5.00"
               />
             </div>
             
-            <div className="flex items-center gap-2 text-xs text-gray-600">
+            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
               <span>Suggested:</span>
               {[3, 5, 10, 15].map((preset) => (
                 <button
@@ -143,8 +143,8 @@ export default function BillingPage() {
                   onClick={() => setAmount(preset)}
                   className={`px-2 py-1 rounded-md border text-xs transition-colors ${
                     amount === preset
-                      ? 'border-blue-200 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                      ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                   disabled={updateSubscription.isPending}
                 >
@@ -167,19 +167,19 @@ export default function BillingPage() {
                   : 'Subscribe'}
             </button>
             {amount < minAmountDollars && (
-                <span className="text-xs text-red-500">Minimum amount is ${minAmountDollars.toFixed(2)}</span>
+                <span className="text-xs text-red-500 dark:text-red-400">Minimum amount is ${minAmountDollars.toFixed(2)}</span>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm pt-4 border-t border-gray-100">
-          <div className="text-gray-500 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="text-gray-500 dark:text-gray-400 text-xs">
              Payments are securely processed by Stripe. You can cancel anytime.
           </div>
           <button
             onClick={() => portalSession.mutate()}
             disabled={portalSession.isPending || !data.stripe_customer_id}
-            className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 text-sm"
+            className="inline-flex items-center justify-center px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 text-sm"
           >
             {portalSession.isPending ? 'Opening…' : 'Manage Billing'}
           </button>

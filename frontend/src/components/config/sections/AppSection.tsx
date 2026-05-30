@@ -47,7 +47,7 @@ export default function AppSection() {
             />
           </Field>
           <Field label="List all episodes in RSS and queue processing on download attempt if not previously whitelisted">
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="checkbox"
                 checked={!!pending?.app?.autoprocess_on_download}
@@ -69,7 +69,7 @@ export default function AppSection() {
             />
           </Field>
           <div className="col-span-1 md:col-span-2 flex items-center gap-3">
-            <label className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+            <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium">
               <input
                 type="checkbox"
                 checked={!!pending?.app?.enable_public_landing_page}
@@ -83,7 +83,7 @@ export default function AppSection() {
 
       <SaveButton onSave={handleSave} isPending={isSaving} />
 
-      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}`}</style>
+      <style>{`.input{width:100%;padding:0.5rem;border:1px solid #e5e7eb;border-radius:0.375rem;font-size:0.875rem}.dark .input{background-color:#111827;border-color:#374151;color:#fff}`}</style>
     </div>
   );
 }
